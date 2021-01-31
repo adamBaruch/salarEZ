@@ -1,0 +1,35 @@
+// app global css in SCSS form
+
+  .constrain {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .constrain2 {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .constrain3{
+    max-width: 1250px;
+    margin: 0 auto;
+  }
+
+  .small-screen-only {
+    @media (max-width: $breakpoint-xs-max) {
+      display: block;
+    }
+    @media (min-width: $breakpoint-sm-min) {
+      display: none;
+    }
+  }
+
+  .large-screen-only {
+    @media (max-width: $breakpoint-xs-max) {
+      display: none;
+    }
+    @media (min-width: $breakpoint-sm-min) {
+      display: block;
+    }
+  }
+
