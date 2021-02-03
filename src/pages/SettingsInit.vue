@@ -44,7 +44,7 @@ export default {
   methods: {
     forward() {
       this.setWage(this.wage)
-      this.$router.push('/')
+      this.$router.push('/').catch(() => {})
     },
     ...mapActions('shifts', ['setWage'])
   }

@@ -74,9 +74,9 @@ export default {
     googleRegister() {
       firebaseAuth.signInWithPopup(provider).then((res) => {
         if (res.additionalUserInfo.isNewUser)
-          this.$router.push('/b/settings_init')
+          this.$router.push('/b/settings_init').catch(() => {})
         else
-          this.$router.push('/')
+          this.$router.push('/').catch(() => {})
       }).catch(function (error) {
 
       });
@@ -84,11 +84,11 @@ export default {
     passwordLogin() {
       firebaseAuth.signInWithEmailAndPassword(this.user.email, this.user.password)
         .then(() => {
-          this.$router.push('/')
+          this.$router.push('/').catch(() => {})
         })
     },
     goToSignUp() {
-      this.$router.push('/b/signup');
+      this.$router.push('/b/signup').catch(() => {});
     }
   },
   validations: {

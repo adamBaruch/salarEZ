@@ -24,8 +24,10 @@ const firebaseDb = firebaseApp.database();
 const firebaseStorage = firebaseApp.storage();
 
 firebaseAuth.onAuthStateChanged(user => {
-  window.userId = user;
-  localStorage.setItem("userId", JSON.stringify(user.uid));
+  if (user) {
+    window.userId = user.uid;
+    localStorage.setItem("userId",user.uid);
+  }
 });
 export {
   firebaseAuth,

@@ -1,23 +1,18 @@
 <template>
   <div class="q-pa-md">
-    <div style="display: inline-flex " class="clockBox">
-      <q-input
-        class="clock"
-        readonly
-        rounded
-        v-model="secondsFormat"
-      />
-      <q-input class="sep" readonly="readonly"  value=":"/>
-      <q-input class="clock" label-color="#3396f3"  readonly v-model="minutesFormat"/>
-      <q-input class="sep" readonly="readonly"  value=":"/>
-      <q-input class="clock" readonly="readonly"  v-model="hoursFormat"/>
+    <div  class="clockBox">
+      <span class="clock">{{secondsFormat}}</span>
+      <span class="sep">{{colon }}</span>
+      <span class="clock">{{minutesFormat}}</span>
+      <span class="sep">{{colon }}</span>
+      <span class="clock">{{hoursFormat}}</span>
     </div>
     <div>
       <q-btn
         class=" btn q-pa-sm"
         push
-        :disable="userInfo.startTime"
-        :color="!userInfo.startTime ? 'blue' : 'grey'"
+        :disable="started"
+        :color="!started ? 'blue' : 'grey'"
         round
         icon="fas fa-play fa-2x"
         @click="startClock()"
@@ -25,8 +20,8 @@
       <q-btn
         class="btn q-pa-sm"
         push
-        :disable="userInfo.startTime"
-        :color="userInfo.startTime ? 'red' : 'grey'"
+        :disable="!started"
+        :color="started ? 'red' : 'grey'"
         round
         icon="fas fa-stop"
         @click="stopTime()"
@@ -66,8 +61,9 @@ export default {
       // hoursFormat: this.clock.hours > 9 ? this.clock.hours : '0' + Math.floor(this.clock.hours)
       secondsFormat: '00',
       minutesFormat: '00',
-      hoursFormat: '00'
-
+      hoursFormat: '00',
+      colon: ":",
+      started: false
     }
   },
   computed: mapState('shifts', [
@@ -80,6 +76,7 @@ export default {
     this.getUserInfo()
       .then(() => {
         if (this.userInfo.startTime != null) {
+          this.started = true;
           let duration = Math.floor((new Date().getTime() - this.userInfo.startTime.startInMillis) / 1000);
           this.clock.hours = Math.floor(duration / 3600);
           duration = duration - this.clock.hours * 3600;
@@ -92,7 +89,7 @@ export default {
           this.showClock();
         }
       })
-      .catch(err => {
+      .catch(() => {
         console.log('לא עודכן שכר שעתי')
       })
   },
@@ -126,6 +123,7 @@ export default {
         , 1000);
     },
     startClock() {
+      this.started = true;
       const time = new Date();
       this.saveStartTimeToDb(this.dateToObj(time));
       this.showClock();
@@ -142,6 +140,7 @@ export default {
       }
     },
     stopTime() {
+      this.started = false;
       this.createItemData();
       this.setEditedShift(this.item);
       this.insertShift();
@@ -201,18 +200,18 @@ export default {
 
 .sep {
   font-size: 60px;
-  width: 10px;
+  width: 20px;
   text-align: center;
 }
 
 .clockBox {
   opacity: 0.7;
-  padding: 110px 20px;
+  padding: 100px 40px;
   border: 6px solid #3396f3;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
-  margin: 40px;
+  margin: 20px;
   box-shadow: 0 3px 10px 3px rgba(51,150,243,.4);
 }
 </style>

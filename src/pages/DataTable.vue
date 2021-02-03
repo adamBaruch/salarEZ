@@ -14,10 +14,10 @@ export default {
   components: {DBTables},
   methods: {
     goToForm() {
-      this.$router.push('/addShift')
+      this.$router.push('/addShift').catch(() => {})
     },
     goBack() {
-      this.$router.push('/Home')
+      this.$router.push('/Home').catch(() => {})
     }
   }
 }

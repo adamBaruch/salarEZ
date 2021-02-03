@@ -86,14 +86,14 @@ export default {
       try {
         await firebaseAuth
           .createUserWithEmailAndPassword(this.user.email, this.user.password)
-        await this.$router.push('/b/settings_init')
+        await this.$router.push('/b/settings_init').catch(() => {})
 
       } catch (error) {
         console.log('error: ' + error)
       }
     },
     gotoLogin(){
-      this.$router.push('/b/login')
+      this.$router.push('/b/login').catch(() => {})
     }
   },
   validations: {

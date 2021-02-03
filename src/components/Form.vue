@@ -79,7 +79,7 @@ export default {
         this.setEditedShift(this.item);
         if (this.item.id) {
           this.updateShift();
-          this.$router.push('/home');
+          this.$router.push('/home').catch(() => {});
         } else {
           this.insertShift();
           this.onReset();

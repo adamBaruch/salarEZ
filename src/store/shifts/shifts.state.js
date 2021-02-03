@@ -1,5 +1,4 @@
 export default {
-
     shifts: {},
     editedShiftId: '',
     editedShiftDate: {},
@@ -17,7 +16,7 @@ export default {
         durationTimeFormat: '',
     },
     userInfo: {
-      startTime: {},
+      startTime: null,
       wage: ''
     },
     income: 0,

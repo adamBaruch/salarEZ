@@ -30,7 +30,11 @@ export default {
 
     insertShift: ((state, shift) => {
         const year = shift.year;
-        const month = shift.month
+        const month = shift.month;
+        if(!state.shifts.hasOwnProperty(year))
+          state.shifts[year] = {}
+        if (!state.shifts[year].hasOwnProperty(month))
+          state.shifts[year][month] = []
         state.shifts[year][month].push(shift);
         state.income += shift.payday;
         state.totalHours += shift.duration;
@@ -51,7 +55,6 @@ export default {
         state.editedShiftDate = date;
     }),
 
-    //
     setStartTime: ((state, date) => {
         state.userInfo.startTime = date;
     }),

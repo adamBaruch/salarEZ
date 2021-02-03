@@ -27,11 +27,11 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
-  window.userId = JSON.parse(localStorage.getItem('userId'));
+  window.userId = localStorage.getItem('userId');
   Router.beforeResolve((to, from, next) => {
     let userId = firebaseAuth.currentUser == null ? null : firebaseAuth.currentUser.uid
     if (userId == null) {
-      userId = JSON.parse(localStorage.getItem('userId'))
+      userId = localStorage.getItem('userId')
       window.userId = userId;
     }
     if (userId && to.meta.authNotRequired || !userId && !to.meta.authNotRequired) {

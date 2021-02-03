@@ -117,11 +117,11 @@ export default {
       const self = this;
       firebaseAuth.signOut().then(() => {
         localStorage.removeItem('userId')
-        self.$router.push('/b/login');
+        self.$router.push('/b/login').catch(() => {});
       })
     },
     goToDataTable() {
-      this.$router.push('/dataTable');
+      this.$router.push('/dataTable').catch(() => {});
     }
   }
 }

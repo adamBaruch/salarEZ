@@ -43,7 +43,7 @@ export default {
   methods: {
     onSubmit() {
       this.setWage(this.wage);
-      this.$router.push('/');
+      this.$router.push('/').catch(() => {});
     },
 
     onReset() {

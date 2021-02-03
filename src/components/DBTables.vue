@@ -1,40 +1,47 @@
 <template>
-  <div class="q-pa-md" style="max-width: 800px">
+  <div class="q-pa-sm" style="max-width: 800px">
     <q-table
-        title="טבלה"
-        :data="data"
-        :columns="columns"
-        row-key="id"
-        binary-state-sort
-        bottom-row="no-data"
+      title="משמרות"
+      :data="data"
+      dense
+      :columns="columns"
+      row-key="id"
+      binary-state-sort
+      bottom-row="no-data"
     >
-      <!--        :visible-columns="visibleColumns"-->
       <template v-slot:bottom-row>
         <q-tr align="center">
-          <q-td>-</q-td>
-          <q-td>-</q-td>
-          <q-td>-</q-td>
-          <q-td>{{ totalHours.toFixed(2) }}</q-td>
-          <q-td>{{ income.toFixed(2) }}</q-td>
-          <q-td>-</q-td>
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><b>{{ totalHours.toFixed(2) }}</b></q-td>
+          <q-td><b>{{ income.toFixed(2) }}</b></q-td>
         </q-tr>
       </template>
 
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-              class="text-italic text-purple"
+            v-for="col in props.cols"
+            :key="col.name"
+            :props="props"
           >
-            {{ col.label }}
+            <b>{{ col.label }}</b>
           </q-th>
         </q-tr>
       </template>
 
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td auto-width v-show="$q.screen.lt.sm">
+            <q-btn size="sm" color="primary" round dense @click="props.expand = !props.expand"
+                   :icon="props.expand ? 'remove' : 'add'"/>
+          </q-td>
+          <q-td v-show="$q.screen.gt.xs" key="actions" :props="props">
+            <q-btn round size="xs" color="deep-orange" icon="delete" @click="deleteRow(props.row)"/>
+            <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)" class="q-ma-xs"/>
+          </q-td>
           <q-td key="date" :props="props">
             {{ props.row.date }}
           </q-td>
@@ -50,9 +57,11 @@
           <q-td key="payday" :props="props">
             {{ props.row.payday.toFixed(2) }}
           </q-td>
+        </q-tr>
+        <q-tr v-show="props.expand" :props="props">
           <q-td key="actions" :props="props">
-            <q-btn class="mdi-delete" round color="deep-orange" icon="delete" @click="deleteRow(props.row.id, props.row.date)"/>
-            <q-btn round color="grey" icon="edit" @click="updateRow(props.row)" class="q-ma-xs"/>
+            <q-btn round size="xs" color="deep-orange" icon="delete" @click="deleteRow(props.row)"/>
+            <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)"/>
           </q-td>
         </q-tr>
       </template>
@@ -64,39 +73,22 @@
 </style>
 
 <script>
-//import dataFunc from "../middleware/dataFunc";
-//import serverApi from "../middleware/serverApi";
-//import firebaseApi from "../middleware/firebaseApi";
-import {mapState, mapActions} from 'vuex'
-import utills from "../middleware/utill";
-
 export default {
   name: 'DBTables',
   data() {
     return {
       columns: [
-        //v-if="$q.screen.gt.xs" this from html here
-        {
-          name: 'date',
-          required: true,
-          label: 'תאריך',
-          align: 'right',
-          //field: row => row.name,
-          // format: val => `${val}`,
-          sortable: true
-        },
+        {name: 'actions', align: 'center', sortable: true},
+        {name: 'date', align: 'center', label: 'תאריך', required: true, sortable: true},
         {name: 'start', align: 'center', label: 'התחלה', field: 'start', sortable: true},
         {name: 'end', align: 'center', label: 'סיום', field: 'end', sortable: true},
         {name: 'duration', align: 'center', label: 'זמן משמרת', field: 'duration', sortable: true},
-        {name: 'payday', align: 'center', label: 'שכר יומי', field: 'payday', headerClasses: 'mobile-hide'},
-        {name: 'actions', align: 'center', label: 'פעולות'}
-        //still can't hide header with screen.gt.xs
+        {name: 'payday', align: 'center', label: 'שכר יומי', field: 'payday'},
       ],
       data: [],
       year: new Date().getFullYear(),
-      month: new Date().getMonth()+1,
+      month: new Date().getMonth() + 1,
       day: new Date().getDate()
-      //totalHoursFormat: ''
     }
   },
   computed: mapState('shifts', [
@@ -106,22 +98,19 @@ export default {
     'income',
     'totalHours'
   ]),
-  created() {
-    this.getShifts().then(() => {
-      this.data = this.shifts[this.year][this.month];
-      // this.totalHoursFormat  = this.formatTotalHours()
-    })
+  async created() {
+    await this.getShifts()
+    if (this.shifts.hasOwnProperty(this.year))
+      if (this.shifts[this.year].hasOwnProperty(this.month))
+        this.data = this.shifts[this.year][this.month]
   },
+
   methods: {
-    // formatTotalHours(){
-    //   return utills.digitize(Math.floor(this.totalHours),utills.toMinutes(this.totalHours));
-    // },
-    deleteRow(id,date) {
-      // this.formatTotalHours();
-      const dateArr = date.split("-");
+    deleteRow(row) {
+      const dateArr = row.date.split("-");
       const dateObj = {year: dateArr[0], month: dateArr[1], day: dateArr[2]}
       this.setEditedShiftDate(dateObj);
-      this.setEditedShiftId(id);
+      this.setEditedShiftId(row.id);
       this.deleteShift();
     },
     updateRow(row) {
@@ -130,13 +119,23 @@ export default {
       this.setEditedShiftDate(dateObj);
       this.setEditedShiftId(row.id);
       this.setEditedShift(row);
-      this.$router.push('/update/' + row.id);
+      this.$router.push('/update/' + row.id).catch(() => {
+      });
     },
-    ...mapActions('shifts', ['getShifts', 'deleteShift', 'updateShift', 'setEditedShiftId', 'setEditedShift','setEditedShiftDate'])
+    ...mapActions('shifts', ['getShifts', 'deleteShift', 'updateShift', 'setEditedShiftId', 'setEditedShift', 'setEditedShiftDate'])
   },
 }
+
+import {mapState, mapActions} from 'vuex'
 </script>
 
 <style scoped>
+.q-table th {
+  padding: 0 0;
+  margin: 0 0;
+}
 
+.q-table body tr{
+   padding: 20px 20px;
+}
 </style>

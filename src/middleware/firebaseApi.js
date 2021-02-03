@@ -1,5 +1,4 @@
 import {firebaseDb, firebaseStorage} from 'boot/firebase';
-const userId = window.userId;
 
 // const arr = [];
 // for (const key in res.val()) {
@@ -17,29 +16,29 @@ async function getUserData() {
 }
 
 function writeData(shift) {
-  return firebaseDb.ref('users/' + userId + '/shifts/' +
+  return firebaseDb.ref('users/' + window.userId + '/shifts/' +
     shift.year + '/' + shift.month + '/' + shift.day).push(shift).key;
 }
 
 function removeData(id, date) {
-  firebaseDb.ref('users/' + userId + '/shifts/' +
+  firebaseDb.ref('users/' + window.userId + '/shifts/' +
     date.year + '/' + date.month + '/' + date.day + '/' + id).remove();
 }
 
 function updateData(newData) {
-  firebaseDb.ref('users/' + userId + '/shifts/' +
+  firebaseDb.ref('users/' + window.userId + '/shifts/' +
     newData.year + '/' + newData.month + '/' + newData.day + '/' + newData.id).set(newData);
 }
 
 function uploadPhoto(photo, callback) {
-  firebaseStorage.ref('users/' + userId + '/photos/' + photo[0].name).put(photo[0]) //.snapshot.
+  firebaseStorage.ref('users/' + window.userId + '/photos/' + photo[0].name).put(photo[0]) //.snapshot.
     .on('value', snapshot => {
       callback(snapshot.bytesTransferred * 100 / snapshot.totalBytes)
     })
 }
 
 function getUserInfo() {
-  return firebaseDb.ref('users/' + userId + '/userInfo').once('value')
+  return firebaseDb.ref('users/' + window.userId + '/userInfo').once('value')
     .then(res => {
       return res.val();
     })
@@ -47,7 +46,7 @@ function getUserInfo() {
 
 
 function setUserInfo(prop, value) {
-  return firebaseDb.ref('users/' + userId + '/userInfo/' + prop).set(value);
+  return firebaseDb.ref('users/' + window.userId + '/userInfo/' + prop).set(value);
 }
 
 export default {
