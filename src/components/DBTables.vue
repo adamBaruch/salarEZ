@@ -1,11 +1,16 @@
 <template>
   <div class="q-pa-sm" style="max-width: 800px">
+
     <q-table
       title="משמרות"
       :data="data"
       dense
       :columns="columns"
       row-key="id"
+      class="my-sticky-virtscroll-table"
+      :pagination="{rowsPerPage: 0}"
+      virtual-scroll
+      :virtual-scroll-item-size="30"
       binary-state-sort
       bottom-row="no-data"
     >
@@ -73,6 +78,8 @@
 </style>
 
 <script>
+//todo: maybe fix table a little more with padding
+//todo: remove pagination
 export default {
   name: 'DBTables',
   data() {
@@ -104,7 +111,6 @@ export default {
       if (this.shifts[this.year].hasOwnProperty(this.month))
         this.data = this.shifts[this.year][this.month]
   },
-
   methods: {
     deleteRow(row) {
       const dateArr = row.date.split("-");
@@ -138,4 +144,25 @@ import {mapState, mapActions} from 'vuex'
 .q-table body tr{
    padding: 20px 20px;
 }
+</style>
+<style lang="sass">
+
+.my-sticky-virtscroll-table
+  /* height or max-height is important */
+  height: 600px
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th /* bg color is important for th; just specify one */
+    background-color: #fff
+
+  thead tr th
+    position: sticky
+    z-index: 1
+  /* this will be the loading indicator */
+  thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+  thead tr:first-child th
+    top: 0
 </style>

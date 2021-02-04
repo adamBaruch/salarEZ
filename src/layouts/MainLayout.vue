@@ -14,16 +14,16 @@
           salarEZ
         </q-toolbar-title>
 
-          <i
-            class="fas fa-sign-out-alt fa-2x"
-            @click="signOut">
-            <q-tooltip
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              התנתק
-            </q-tooltip>
-          </i>
+        <i
+          class="fas fa-sign-out-alt fa-2x"
+          @click="signOut">
+          <q-tooltip
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            התנתק
+          </q-tooltip>
+        </i>
 
       </q-toolbar>
     </q-header>
@@ -56,18 +56,24 @@
       <router-view/>
     </q-page-container>
 
-    <q-footer class="footer transparent border">
-      <q-btn round
-             color="primary"
-             class="q-ma-sm buttonIcon"
-             icon="event_note"
-             @click="goToDataTable"
+    <q-page-sticky position="bottom-right" :offset="fabPos">
+      <q-fab
+        icon="add"
+        direction="up"
+        padding="7px"
+        color="secondary"
+        :disable="draggingFab"
+        v-touch-pan.prevent.mouse="moveFab"
       >
-        <template v-slot:append>
-          <q-icon class="event_note"></q-icon>
-        </template>
-      </q-btn>
-    </q-footer>
+        <q-fab-action round
+                      v-for="btn in fabs"
+                      :key="btn.icon"
+                      :color="btn.color"
+                      :icon="btn.icon"
+                      @click="goTo(btn.link)"/>
+
+      </q-fab>
+    </q-page-sticky>
   </q-layout>
 </template>
 
@@ -75,6 +81,24 @@
 import EssentialLink from 'components/EssentialLink.vue'
 import {firebaseAuth} from "boot/firebase";
 
+const fabs = [
+  {
+    color: 'primary',
+    icon: 'event_note',
+    link: '/my_shifts'
+  },
+  {
+    color: 'primary',
+    icon: 'fas fa-stopwatch',
+    link: '/'
+  },
+  {
+    color: 'primary',
+    icon: 'settings',
+    link: '/settings'
+  }
+]
+//todo: check about the little scroll that i cant get rid of
 const linksData = [
   {
     title: 'אודות',
@@ -84,19 +108,19 @@ const linksData = [
   },
   {
     title: 'תלוש',
-    caption:'',
+    caption: '',
     icon: 'fas fa-image',
-    link: 'picture'
+    link: 'upload'
   },
   {
     title: 'משמרות',
-    caption:'',
+    caption: '',
     icon: 'event_note',
-    link: 'shifts'
+    link: 'my_shifts'
   },
   {
     title: 'התנתקות',
-    caption:'',
+    caption: '',
     icon: 'fas fa-sign-out-alt',
     link: 'logout'
   },
@@ -109,31 +133,38 @@ export default {
   data() {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      fabs: fabs,
+      essentialLinks: linksData,
+      fabPos: [18, 18],
+      draggingFab: false
     }
   },
-  methods:{
+  methods: {
     signOut() {
       const self = this;
       firebaseAuth.signOut().then(() => {
         localStorage.removeItem('userId')
-        self.$router.push('/b/login').catch(() => {});
+        self.$router.push('/b/login').catch(() => {
+        });
       })
     },
-    goToDataTable() {
-      this.$router.push('/dataTable').catch(() => {});
+    goTo(route) {
+      this.$router.push(route).catch(() => {
+      });
+    },
+    moveFab(ev) {
+      this.draggingFab = ev.isFirst !== true && ev.isFinal !== true
+
+      this.fabPos = [
+        this.fabPos[0] + ev.delta.x,
+        this.fabPos[1] - ev.delta.y
+      ]
     }
   }
 }
 </script>
 
 <style scoped>
-.footer{
-  color: #203674;
-  font-size: 20px;
-}
-.buttonIcon{
-  font-size: 15px;
-}
+
 
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div class="q-pa-md">
     <div  class="clockBox">
-      <span class="clock">{{secondsFormat}}</span>
+      <span class="clock">{{hoursFormat}}</span>
       <span class="sep">{{colon }}</span>
       <span class="clock">{{minutesFormat}}</span>
       <span class="sep">{{colon }}</span>
-      <span class="clock">{{hoursFormat}}</span>
+      <span class="clock">{{secondsFormat}}</span>
     </div>
     <div>
       <q-btn
@@ -21,7 +21,7 @@
         class="btn q-pa-sm"
         push
         :disable="!started"
-        :color="started ? 'red' : 'grey'"
+        :color="started ? 'secondary' : 'grey'"
         round
         icon="fas fa-stop"
         @click="stopTime()"
@@ -73,6 +73,7 @@ export default {
     'userInfo'
   ]),
   created() {
+    //todo: check first if start time in store then in firebase
     this.getUserInfo()
       .then(() => {
         if (this.userInfo.startTime != null) {

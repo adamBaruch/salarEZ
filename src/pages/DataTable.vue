@@ -1,23 +1,33 @@
 <template>
-  <div>
-    <q-btn label="הוספת משמרת" @click="goToForm"/>
-    <q-btn icon="keyboard_backspace"  @click="goBack">חזור</q-btn>
+  <q-page>
+    <q-btn dense
+           flat
+           class="q-pa-xs"
+           icon="fas fa-arrow-right"
+           @click="goBack"/>
+    <q-btn  rounded
+            label="הוספת משמרת"
+            class="fixed-top-right"
+            icon-right="fas fa-stopwatch"
+            color="primary"
+            style="margin-top: 55px"
+            @click="goTo('/')"/>
     <DBTables/>
-  </div>
+  </q-page>
 </template>
 
 <script>
 import DBTables from "../components/DBTables";
 
 export default {
-  name: "DataTable",
+  name: "my_shifts",
   components: {DBTables},
   methods: {
-    goToForm() {
-      this.$router.push('/addShift').catch(() => {})
+    goTo(route) {
+      this.$router.push(route).catch(() => {})
     },
     goBack() {
-      this.$router.push('/Home').catch(() => {})
+      this.$router.back()
     }
   }
 }

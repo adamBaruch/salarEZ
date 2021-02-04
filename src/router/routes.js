@@ -33,13 +33,13 @@ const routes = [
         meta: {authNotRequired: false},
       },
       {
-        path: 'dataTable',
-        name: 'DataTable',
+        path: 'my_shifts',
+        name: 'my_shifts',
         component: () => import('pages/DataTable.vue'),
         meta: {authNotRequired: false},
       },
       {
-        path: 'addShift',
+        path: 'add_shift',
         name: 'AddShift',
         component: () => import('pages/AddShift.vue'),
         meta: {authNotRequired: false},
