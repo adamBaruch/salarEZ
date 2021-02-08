@@ -1,4 +1,3 @@
-import {matUmbrella} from "@quasar/extras/material-icons";
 
 function digitize(hours, minutes) {
   hours = Math.floor(hours);
@@ -50,7 +49,7 @@ function makeShiftFromClock(data,wage) {
   const start = new Date(data.start);
   const end = new Date(data.end);
   const durationMinutes = ((data.duration/60000)%60).toFixed(0);
-  const durationHours = (data.duration - durationMinutes)/3600000
+  const durationHours = (data.duration/3600000).toFixed(0);
   return {
     date: start.getDate() + '/' + (start.getMonth()+1) + '/' + start.getFullYear(),
     day: start.getDate(),
