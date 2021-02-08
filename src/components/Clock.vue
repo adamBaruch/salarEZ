@@ -39,26 +39,15 @@ export default {
   data() {
     return {
       item: {
-        date: '',
-        day: '',
-        month: '',
-        year: '',
-        duration: '',
         start: '',
         end: '',
-        payday: '',
-        startTimeFormat: '',
-        endTimeFormat: '',
-        durationTimeFormat: '',
+        duration: '',
       },
       clock: {
         seconds: 0,
         minutes: 0,
         hours: 0
       },
-      // secondsFormat: this.clock.seconds > 9 ? this.clock.seconds : '0' + Math.floor(this.clock.seconds),
-      // minutesFormat: this.clock.minutes > 9 ? this.clock.minutes : '0' + Math.floor(this.clock.minutes),
-      // hoursFormat: this.clock.hours > 9 ? this.clock.hours : '0' + Math.floor(this.clock.hours)
       secondsFormat: '00',
       minutesFormat: '00',
       hoursFormat: '00',
@@ -66,19 +55,14 @@ export default {
       started: false
     }
   },
-  computed: mapState('shifts', [
-    'shifts',
-    'editedShift',
-    'editedShiftId',
-    'userInfo'
-  ]),
+  computed: mapState('shifts', ['shifts', 'editedShift', 'editedShiftId', 'userInfo']),
   created() {
-    //todo: check first if start time in store then in firebase
     this.getUserInfo()
       .then(() => {
         if (this.userInfo.startTime != null) {
           this.started = true;
-          let duration = Math.floor((new Date().getTime() - this.userInfo.startTime.startInMillis) / 1000);
+          this.item.start = this.userInfo.startTime
+          let duration = Math.floor((new Date().getTime() - this.userInfo.startTime) / 1000);
           this.clock.hours = Math.floor(duration / 3600);
           duration = duration - this.clock.hours * 3600;
           this.clock.minutes = Math.floor(duration / 60);
@@ -126,48 +110,18 @@ export default {
     startClock() {
       this.started = true;
       const time = new Date();
-      this.saveStartTimeToDb(this.dateToObj(time));
+      this.item.start = time.getTime();
+      this.saveStartTime(time.getTime());
       this.showClock();
-    },
-    dateToObj(time) {
-      return {
-        hours: time.getHours(),
-        minutes: time.getMinutes(),
-        seconds: time.getSeconds(),
-        year: time.getFullYear(),
-        month: time.getMonth(),
-        day: time.getDate(),
-        startInMillis: time.getTime()
-      }
     },
     stopTime() {
       this.started = false;
-      this.createItemData();
-      this.setEditedShift(this.item);
-      this.insertShift();
-      this.saveStartTimeToDb(null);
+      this.item.end = new Date().getTime();
+      this.item.duration = this.item.end - this.item.start;
+      this.insertShift(utills.makeShiftFromClock(this.item,this.userInfo.wage));
+      this.item = {};
+      this.saveStartTime(null);
       this.clearDisplay();
-    },
-    createItemData() {
-      const startDate = this.userInfo.startTime;
-      const endDate = this.dateToObj(new Date());
-      const overSettings = [
-        {numOfHours: 8, percentage: 1},
-        {numOfHours: 2, percentage: 1.25},
-        {numOfHours: 8, percentage: 1.5}
-      ]
-      this.item.year = Number.parseInt(startDate.year);
-      this.item.month = Number.parseInt(startDate.month) + 1;
-      this.item.day = Number.parseInt(startDate.day);
-      this.item.start = startDate.hours + startDate.minutes / 60 + startDate.seconds / 3600;
-      this.item.end = endDate.hours + endDate.minutes / 60 + endDate.seconds / 3600;
-      this.item.duration = Number.parseFloat(((this.item.end - this.item.start)).toFixed(2));
-      this.item.date = startDate.year + '-' + (Number.parseInt(startDate.month) + 1) + '-' + startDate.day;
-      this.item.payday = utills.paydayCalc(overSettings, this.item.duration, this.userInfo.wage);
-
-      this.item.startTimeFormat = utills.digitize(startDate.hours, startDate.minutes);
-      this.item.endTimeFormat = utills.digitize(endDate.hours, endDate.minutes);
-      this.item.durationTimeFormat = utills.digitize(this.item.duration, utills.toMinutes(this.item.duration));
     },
     clearDisplay() {
       clearInterval(this.interval);
@@ -178,8 +132,7 @@ export default {
       this.minutesFormat = '00';
       this.hoursFormat = '00';
     },
-    ...mapActions('shifts', ['insertShift', 'updateShift', 'resetShift',
-      'setEditedShift', 'saveStartTimeToDb', 'getUserInfo'])
+    ...mapActions('shifts', ['insertShift', 'saveStartTime', 'getUserInfo'])
   }
 }
 </script>

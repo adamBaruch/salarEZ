@@ -1,12 +1,5 @@
 import {firebaseDb, firebaseStorage} from 'boot/firebase';
 
-// const arr = [];
-// for (const key in res.val()) {
-//     const shift = res.val()[key];
-//     shift.id = key;
-//     arr.push(shift);
-// }
-// return arr;
 async function getUserData() {
   let userId = await localStorage.getItem('userId');
   if (userId) {
@@ -16,13 +9,13 @@ async function getUserData() {
 }
 
 function writeData(shift) {
-  return firebaseDb.ref('users/' + window.userId + '/shifts/' +
+  return  firebaseDb.ref('users/' + window.userId + '/shifts/' +
     shift.year + '/' + shift.month + '/' + shift.day).push(shift).key;
 }
 
-function removeData(id, date) {
+function deleteShift(id, date) {
   firebaseDb.ref('users/' + window.userId + '/shifts/' +
-    date.year + '/' + date.month + '/' + date.day + '/' + id).remove();
+    date[2] + '/' + date[1] + '/' + date[0] + '/' + id).remove();
 }
 
 function updateData(newData) {
@@ -52,7 +45,7 @@ function setUserInfo(prop, value) {
 export default {
   getUserData,
   writeData,
-  removeData,
+  deleteShift,
   updateData,
   uploadPhoto,
   getUserInfo,

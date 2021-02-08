@@ -81,7 +81,7 @@ export default {
           this.updateShift();
           this.$router.push('/home').catch(() => {});
         } else {
-          this.insertShift();
+          this.insertShift(this.item);
           this.onReset();
         }
       } else {
@@ -90,23 +90,8 @@ export default {
       }
     },
     calculateShift() {
-      const startTimeArr = this.item.startTimeFormat.split(":");
-      const endTimeArr = this.item.endTimeFormat.split(":");
-      const dateArr = this.item.date.split("-")
-      const overSettings = [
-        {numOfHours: 8, percentage: 1},
-        {numOfHours: 2, percentage: 1.25},
-        {numOfHours: 8, percentage: 1.5}
-      ]
-      this.item.year = Number.parseInt(dateArr[0]);
-      this.item.month = Number.parseInt(dateArr[1]);
-      this.item.day = Number.parseInt(dateArr[2]);
-      this.item.start = Number.parseFloat(startTimeArr[0]) + Number.parseFloat(startTimeArr[1]) / 60;
-      this.item.end = Number.parseFloat(endTimeArr[0]) + Number.parseFloat(endTimeArr[1]) / 60;
-      this.item.duration = utills.calcDuration(this.item.start, this.item.end);
-      this.item.payday = utills.paydayCalc(overSettings, this.item.duration, this.userInfo.wage);
-      this.item.durationTimeFormat = utills.digitize(this.item.duration, utills.toMinutes(this.item.duration));
-    },
+      utills.makeShiftFromForm(this.item,this.userInfo.wage)
+ },
     onReset() {
       for (const key in this.item) {
         this.item[key] = '';

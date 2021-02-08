@@ -1,7 +1,54 @@
 <template>
-  <div class="q-pa-sm" style="max-width: 800px">
+  <div class="q-pa-sm flex flex-center" style="max-width: 800px" >
+    <q-markup-table v-if="!finishedLoading">
+      <thead>
+      <tr>
+        <th class="text-left" style="width: 150px">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+      </tr>
+      </thead>
 
+      <tbody>
+      <tr v-for="n in 5" :key="n">
+        <td class="text-left">
+          <q-skeleton animation="blink" type="text" width="85px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="50px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="35px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="65px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="25px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="85px"/>
+        </td>
+      </tr>
+      </tbody>
+    </q-markup-table>
     <q-table
+      v-if="data.length!==0"
       title="משמרות"
       :data="data"
       dense
@@ -63,14 +110,19 @@
             {{ props.row.payday.toFixed(2) }}
           </q-td>
         </q-tr>
-        <q-tr v-show="props.expand" :props="props">
+        <q-tr v-show="props.expand" :props="props.row">
           <q-td key="actions" :props="props">
             <q-btn round size="xs" color="deep-orange" icon="delete" @click="deleteRow(props.row)"/>
+          </q-td>
+          <q-td>
             <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)"/>
           </q-td>
         </q-tr>
       </template>
     </q-table>
+    <h5 v-if="finishedLoading && data.length===0" >
+      אין משמרות להצגה
+    </h5>
   </div>
 </template>
 
@@ -78,8 +130,6 @@
 </style>
 
 <script>
-//todo: maybe fix table a little more with padding
-//todo: remove pagination
 export default {
   name: 'DBTables',
   data() {
@@ -95,7 +145,8 @@ export default {
       data: [],
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1,
-      day: new Date().getDate()
+      day: new Date().getDate(),
+      finishedLoading: false,
     }
   },
   computed: mapState('shifts', [
@@ -107,21 +158,19 @@ export default {
   ]),
   async created() {
     await this.getShifts()
-    if (this.shifts.hasOwnProperty(this.year))
-      if (this.shifts[this.year].hasOwnProperty(this.month))
+    if (this.shifts.hasOwnProperty(this.year)) {
+      if (this.shifts[this.year].hasOwnProperty(this.month)) {
         this.data = this.shifts[this.year][this.month]
+      }
+    }
+    this.finishedLoading = true
   },
   methods: {
     deleteRow(row) {
-      const dateArr = row.date.split("-");
-      const dateObj = {year: dateArr[0], month: dateArr[1], day: dateArr[2]}
-      this.setEditedShiftDate(dateObj);
-      this.setEditedShiftId(row.id);
-      this.deleteShift();
+      this.deleteShift({id:row.id,date:row.date});
     },
     updateRow(row) {
-      const dateArr = row.date.split("-");
-      const dateObj = {year: dateArr[0], month: dateArr[1], day: dateArr[2]}
+      const dateObj = {year: row.year, month: row.month, day: row.day}
       this.setEditedShiftDate(dateObj);
       this.setEditedShiftId(row.id);
       this.setEditedShift(row);
@@ -141,15 +190,15 @@ import {mapState, mapActions} from 'vuex'
   margin: 0 0;
 }
 
-.q-table body tr{
-   padding: 20px 20px;
+.q-table body tr {
+  padding: 20px 20px;
 }
 </style>
 <style lang="sass">
 
 .my-sticky-virtscroll-table
   /* height or max-height is important */
-  height: 600px
+  max-height: 600px
 
   .q-table__top,
   .q-table__bottom,
@@ -160,9 +209,12 @@ import {mapState, mapActions} from 'vuex'
     position: sticky
     z-index: 1
   /* this will be the loading indicator */
+
+
   thead tr:last-child th
     /* height of all previous header rows */
     top: 48px
+
   thead tr:first-child th
     top: 0
 </style>

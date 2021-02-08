@@ -3,6 +3,7 @@
     <q-btn dense
            flat
            class="q-pa-xs"
+           color="secondary"
            icon="fas fa-arrow-right"
            @click="goBack"/>
     <q-btn  rounded

@@ -59,13 +59,20 @@
     <q-page-sticky position="bottom-right" :offset="fabPos">
       <q-fab
         icon="add"
+        label-class="bg-grey-3 text-purple"
         direction="up"
-        padding="7px"
+        label="פעולות"
+        padding="10px"
+        external-label
         color="secondary"
         :disable="draggingFab"
         v-touch-pan.prevent.mouse="moveFab"
       >
         <q-fab-action round
+                      label-class="bg-grey-3 text-grey-8"
+                      external-label
+                      color="primary"
+                      :label="btn.name"
                       v-for="btn in fabs"
                       :key="btn.icon"
                       :color="btn.color"
@@ -83,16 +90,19 @@ import {firebaseAuth} from "boot/firebase";
 
 const fabs = [
   {
+    name: 'משמרות',
     color: 'primary',
     icon: 'event_note',
-    link: '/my_shifts'
+    link: '/my_shifts',
   },
   {
+    name: 'התחלת משמרת',
     color: 'primary',
     icon: 'fas fa-stopwatch',
     link: '/'
   },
   {
+    name: 'הגדרות',
     color: 'primary',
     icon: 'settings',
     link: '/settings'
