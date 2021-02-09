@@ -16,7 +16,7 @@ export default {
             let shift = shifts[year][month][day][key]; //new stuff 'let'
             shift.id = key;
             income += shift.payday;
-            time += shift.duration/3600000;
+            time += shift.duration / 3600000;
             stateShifts[year][month].push(shift);
           }
         }
@@ -27,7 +27,7 @@ export default {
     commit('setShifts', stateShifts);
   },
 
-  updateShift: ({commit, state},shift) => {
+  updateShift: ({commit, state}, shift) => {
     //duplicate data from state
     const totalHours = {...state.totalHours};
     const income = {...state.income};
@@ -38,16 +38,13 @@ export default {
     commit("setTotalHours", totalHours - oldShift.duration + shift.duration);
     commit("setIncome", income - oldShift.payday + shift.payday);
     commit('updateShift', {shift, index});
-    //resets:
-    commit('resetEditedShiftId');//maybe can be deleted
-    commit('resetEditedShiftDate');//maybe can be deleted
     commit('resetEditedShift');
   },
 
-  deleteShift: ({commit, state}, {id,date}) => {
-    const dateArr = date.split('/')
-    firebaseApi.deleteShift(id, dateArr);
-    commit('deleteShift', {id, dateArr});
+  deleteShift: ({commit, state}, shift) => {
+    const dateArr = shift.dateFormat.split('/')
+    firebaseApi.deleteShift(shift.id, dateArr);
+    commit('deleteShift', {id:shift.id, dateArr});
   },
 
   insertShift: async ({commit, state}, shift) => {
@@ -55,23 +52,9 @@ export default {
     commit('insertShift', shift);
   },
 
-  resetShift: ({commit}) => {
-    commit('resetEditedShift');
-    commit('resetEditedShiftId');
-  },
-
   setEditedShift: ({commit}, shift) => {
     commit('setEditedShift', shift);
   },
-
-  setEditedShiftId({commit, state}, id) {
-    commit('setEditedShiftId', id);
-  },
-
-  setEditedShiftDate({commit, state}, date) {
-    commit('setEditedShiftDate', date);
-  },
-  //////////
 
   async saveStartTime({commit, state}, time) {
     await firebaseApi.setUserInfo('startTime', time);
@@ -87,4 +70,13 @@ export default {
     await firebaseApi.setUserInfo('wage', wage);
     commit('setWage', wage);
   },
+
+  handleButtonClick({state, commit}, func) {
+    if (state.buttonDisabled) return;
+    func();
+    commit('isDisabled', true);
+    setTimeout(() => {
+      commit('isDisabled', false);
+    }, 500);
+  }
 }

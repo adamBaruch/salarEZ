@@ -12,11 +12,6 @@ export default {
   components: {
     Form
   },
-  methods:{
-    gotoHome (){
-      this.$router.push('/').catch(() => {});
-    }
-  }
 }
 </script>
 

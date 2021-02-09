@@ -1,4 +1,5 @@
 export default {
+  buttonDisabled: false,
   shifts: {},
   editedShiftId: '',
   editedShiftDate: {},

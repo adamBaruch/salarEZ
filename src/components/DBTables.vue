@@ -93,7 +93,7 @@
             <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)" class="q-ma-xs"/>
           </q-td>
           <q-td key="date" :props="props">
-            {{ props.row.date }}
+            {{ props.row.dateFormat}}
           </q-td>
           <q-td key="start" :props="props">
             {{ props.row.startTimeFormat }}
@@ -174,15 +174,12 @@ export default {
   },
   methods: {
     deleteRow(row) {
-      this.deleteShift({id:row.id,date:row.date});
+      this.deleteShift(row);
     },
     goTo(route) {
       this.$router.push(route).catch(() => {})
     },
     updateRow(row) {
-      const dateObj = {year: row.year, month: row.month, day: row.day}
-      this.setEditedShiftDate(dateObj);
-      this.setEditedShiftId(row.id);
       this.setEditedShift(row);
       this.$router.push('/update/' + row.id).catch(() => {
       });

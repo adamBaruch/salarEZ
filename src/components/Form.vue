@@ -1,32 +1,31 @@
 <template>
-  <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md constrain column">
-    <span>התחלת משמרת</span>
-    <div class="row q-gutter-sm">
-      <q-input
-        filled
-        :readonly="hasId"
-        type="date"
-        v-model="item.startDate"
-        label="תאריך *"
-        stack-label
-      />
+  <q-form @submit="onSubmit" @reset="resetForm" class="q-gutter-md constrain column">
+   <span>{{ item.id ? 'עריכה' : 'הוספה'}}</span>
+    <q-input
+      filled
+      :readonly="$route.params.id !== undefined"
+      type="date"
+      v-model="item.date"
+      label="תאריך *"
+      stack-label
+    />
+    <div class="q-gutter-sm">
       <q-input filled type="time" v-model="item.startTimeFormat"
-               label="שעה*"
-               stack-label/>
+               label="שעה"
+               stack-label>
+        <template v-slot:prepend>
+          התחלה
+        </template>
+      </q-input>
+
+      <q-input filled type="time" v-model="item.endTimeFormat" label="שעה"
+               stack-label>
+        <template v-slot:prepend>
+          סיום
+        </template>
+      </q-input>
     </div>
-    <span>סיום משמרת</span>
-    <div class="row q-gutter-sm">
-      <q-input
-        filled
-        :readonly="hasId"
-        type="date"
-        v-model="item.endDate"
-        label="תאריך *"
-        stack-label
-      />
-      <q-input filled type="time" v-model="item.endTimeFormat" label="שעה*"
-               stack-label/>
-    </div>
+    <span class="text-body1"><b>*תעריף:</b> {{ userInfo.wage}}  ש"ח לשעה</span>
     <div class="row flex-center">
       <q-btn :label="item.id ? 'עדכן' : 'הוסף'"
              :disable="!filled"
@@ -46,56 +45,31 @@ export default {
   data() {
     return {
       item: {
-        endDate: '',
-        startDate: '',
         date: '',
-        day: '',
-        month: '',
-        year: '',
-        duration: '',
-        start: '',
-        end: '',
-        payday: '',
         startTimeFormat: '',
         endTimeFormat: '',
-        durationTimeFormat: '',
       },
-      hasId: false
     }
   },
   created() {
-    this.getUserInfo();
-    if (this.editedShiftId !== '') {
-      this.hasId = true
-      for (const key in this.editedShift) {
+    if (this.$route.params.id)
+      for (const key in this.editedShift)
         this.item[key] = this.editedShift[key];
-      }
-      this.setEditedShiftDate({
-        year: this.item.year,
-        month: this.item.month,
-        day: this.item.day
-      })
-    }
+    console.log(this.$route.params.id);
   },
   computed: {
-    endDateInit() {
-      return this.item.startDate;
-    },
     filled: {
       get() {
-        return this.item.startDate && this.item.endDate
-          && this.item.startTimeFormat && this.item.endTimeFormat
+        return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
       },
       set(){}
     },
-    ...mapState('shifts', ['shifts', 'editedShift', 'editedShiftId', 'userInfo'])
+    ...mapState('shifts', ['editedShift', 'userInfo'])
   },
   methods: {
     onSubmit() {
       if (this.userInfo && this.userInfo.wage) {
-        try{
           const shift = this.calculateShift();
-          this.setEditedShift(shift);
           if (this.$route.params.id) {
             shift.id = this.$route.params.id
             this.updateShift(shift);
@@ -103,37 +77,21 @@ export default {
             });
           } else {
             this.insertShift(shift);
-            this.onReset();
+            this.resetForm();
           }
-        }catch (err){
-          this.$q.dialog({
-            title: 'שגיאה',
-            message: err
-          }).onOk(() => {
-          })
-        }
       } else {
-        //dialog to be opened
-        this.onReset();
+        this.resetForm();
       }
     },
     calculateShift() {
         return utills.makeShiftFromForm(this.item, this.userInfo.wage)
     },
-    onReset() {
+    resetForm() {
       for (const key in this.item) {
         this.item[key] = '';
       }
     },
-    filled() {
-      return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
-    },
-    ...mapActions('shifts', ['insertShift', 'updateShift', 'resetShift', 'setEditedShift', 'getUserInfo', 'setEditedShiftDate'])
-  },
-  watch: {
-    endDateInit: function (newVal1) {
-      this.item.endDate = newVal1
-    }
+    ...mapActions('shifts', ['insertShift', 'updateShift', 'setEditedShift'])
   },
 }
 </script>

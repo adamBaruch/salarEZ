@@ -40,7 +40,8 @@ function makeShiftFromClock(data,wage) {
   const durationMinutes = ((data.duration/60000)%60).toFixed(0);
   const durationHours = (data.duration/3600000).toFixed(0);
   return {
-    date: start.getDate() + '/' + (start.getMonth()+1) + '/' + start.getFullYear(),
+    date: start.getFullYear() + '-' + digitizeSingle(start.getMonth()+1) + '-' +digitizeSingle(start.getDate()),
+    dateFormat: start.getDate() + '/' + (start.getMonth()+1) + '/' + start.getFullYear(),
     day: start.getDate(),
     duration: data.duration,
     durationTimeFormat: digitize(durationHours, durationMinutes),
@@ -54,33 +55,42 @@ function makeShiftFromClock(data,wage) {
   }
 }
 
+function timeFormatToObj(time){
+  const timeArr = time.split(':');
+  return {
+    hour: Number.parseInt(timeArr[0]),
+    minute:Number.parseInt(timeArr[1])
+  }
+}
+function dateFormatToArr(date){
+  const dateArr = date.split('-')
+  return{
+    day: Number.parseInt(dateArr[2]),
+    month:Number.parseInt(dateArr[1]) - 1,
+    year: Number.parseInt(dateArr[0]),
+  }
+}
+function calcDuration(start,end){
+  const hours = (end.hour - start.hour);
+  const hoursInMillis = (hours < 0 ? 24 + hours : hours)*3600000;
+  const  minutes = (end.minute - start.minute);
+  const minutesInMillis = (minutes< 0 ? 60 + minutes : minutes)*60000
+  return hoursInMillis + minutesInMillis;
+}
+
 function makeShiftFromForm(item,wage){
   //initialize data:
-  const startTimeArr = item.startTimeFormat.split(":");
-  const startHour = Number.parseInt(startTimeArr[0]);
-  const startMinute = Number.parseInt(startTimeArr[1]);
-  const endTimeArr = item.endTimeFormat.split(":");
-  const endHour = Number.parseInt(endTimeArr[0]);
-  const endMinute = Number.parseInt(endTimeArr[1]);
-  const startDateArr = item.startDate.split("-")
-  const startYear = Number.parseInt(startDateArr[0]);
-  const startMonth = Number.parseInt(startDateArr[1]) -1;
-  const startDay = Number.parseInt(startDateArr[2]);
-  const endDateArr = item.endDate.split("-");
-  const endYear = Number.parseInt(endDateArr[0]);
-  const endMonth = Number.parseInt(endDateArr[1]) -1;
-  const endDay = Number.parseInt(endDateArr[2]);
+  const start = timeFormatToObj(item.startTimeFormat);
+  const end = timeFormatToObj(item.endTimeFormat);
+  const duration  = calcDuration(start,end);
+  const date = dateFormatToArr(item.date);
 
-  const startDate = new Date(startYear,startMonth,startDay,startHour,startMinute,0,0);
-  const endDate =new Date(endYear,endMonth,endDay,endHour,endMinute,0,0);
-  if(endDate.getTime()-startDate.getTime() < 0){
-    throw('זמני משמרת לא תקינים')
-  }
+  const startDate = new Date(date.year,date.month,date.day,start.hour,start.minute,0,0);
   //create shift:
   const data = {
     start: startDate.getTime(),
-    end: endDate.getTime(),
-    duration: endDate.getTime() - startDate.getTime()
+    end: startDate.getTime() + duration,
+    duration: duration
   };
   return makeShiftFromClock(data,wage)
 }
@@ -89,5 +99,6 @@ export default {
   digitize,
   digitizeSingle,
   makeShiftFromClock,
-  makeShiftFromForm
+  makeShiftFromForm,
+  calcDuration
 }

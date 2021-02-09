@@ -10,12 +10,6 @@ export default {
     }
   }),
 
-  resetEditedShiftDate: ((state) => {
-    state.editedShiftDate = ''
-  }),
-
-  resetEditedShiftId: (state => state.editedShiftId = ''),
-
   updateShift: ((state, {shift,index}) => {
     state.shifts[shift.year][shift.month].splice(index, 1, shift);
   }),
@@ -24,7 +18,7 @@ export default {
     const thisMonthArray = state.shifts[dateArr[2]][dateArr[1]];
     const index = thisMonthArray.findIndex(temp => temp.id === id);
     const deleted = thisMonthArray.splice(index, 1);
-    state.totalHours -= deleted[0].duration;
+    state.totalHours -= deleted[0].duration / 3600000;
     state.income -= deleted[0].payday;
   }),
 
@@ -37,7 +31,7 @@ export default {
       state.shifts[year][month] = []
     state.shifts[year][month].push(shift);
     state.income += shift.payday;
-    state.totalHours += shift.duration;
+    state.totalHours += shift.duration / 3600000;
   }),
 
   setEditedShift: ((state, shift) => {
@@ -45,14 +39,6 @@ export default {
       if (shift.hasOwnProperty(key))
         state.editedShift[key] = shift[key];
     }
-  }),
-
-  setEditedShiftId: ((state, id) => {
-    state.editedShiftId = id;
-  }),
-
-  setEditedShiftDate: ((state, date) => {
-    state.editedShiftDate = date;
   }),
 
   setStartTime: ((state, date) => {
@@ -75,5 +61,9 @@ export default {
 
   setWage: ((state, wage) => {
     state.userInfo.wage = wage;
+  }),
+
+  isDisabled: ((state, bool)=>{
+    state.buttonDisabled = bool;
   })
 }

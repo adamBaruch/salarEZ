@@ -15,7 +15,7 @@
         :color="!started ? 'blue' : 'grey'"
         round
         icon="fas fa-play fa-2x"
-        @click="startClock()"
+        @click="handleButtonClick(startClock)"
       />
       <q-btn
         class="btn q-pa-sm"
@@ -132,7 +132,7 @@ export default {
       this.minutesFormat = '00';
       this.hoursFormat = '00';
     },
-    ...mapActions('shifts', ['insertShift', 'saveStartTime', 'getUserInfo'])
+    ...mapActions('shifts', ['insertShift', 'saveStartTime', 'getUserInfo','handleButtonClick'])
   }
 }
 </script>
