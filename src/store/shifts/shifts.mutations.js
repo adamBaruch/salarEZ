@@ -16,9 +16,8 @@ export default {
 
   resetEditedShiftId: (state => state.editedShiftId = ''),
 
-  updateShift: ((state, editedShift) => {
-    const index = state.shifts[editedShift.year][editedShift.month].findIndex(temp => temp.id === editedShift.id);
-    state.shifts[editedShift.year][editedShift.month].splice(index, 1, editedShift);
+  updateShift: ((state, {shift,index}) => {
+    state.shifts[shift.year][shift.month].splice(index, 1, shift);
   }),
 
   deleteShift: ((state, {id, dateArr}) => {
@@ -41,12 +40,11 @@ export default {
     state.totalHours += shift.duration;
   }),
 
-  setEditedShift: ((state, {shift, newShift}) => {
+  setEditedShift: ((state, shift) => {
     for (const key in shift) {
       if (shift.hasOwnProperty(key))
         state.editedShift[key] = shift[key];
     }
-    state.newShift = newShift;
   }),
 
   setEditedShiftId: ((state, id) => {

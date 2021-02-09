@@ -64,15 +64,18 @@ function makeShiftFromForm(item,wage){
   const endMinute = Number.parseInt(endTimeArr[1]);
   const startDateArr = item.startDate.split("-")
   const startYear = Number.parseInt(startDateArr[0]);
-  const startMonth = Number.parseInt(startDateArr[1]);
+  const startMonth = Number.parseInt(startDateArr[1]) -1;
   const startDay = Number.parseInt(startDateArr[2]);
-  const endDateArr = item.startDate.split("-");
+  const endDateArr = item.endDate.split("-");
   const endYear = Number.parseInt(endDateArr[0]);
-  const endMonth = Number.parseInt(endDateArr[1]);
+  const endMonth = Number.parseInt(endDateArr[1]) -1;
   const endDay = Number.parseInt(endDateArr[2]);
 
   const startDate = new Date(startYear,startMonth,startDay,startHour,startMinute,0,0);
   const endDate =new Date(endYear,endMonth,endDay,endHour,endMinute,0,0);
+  if(endDate.getTime()-startDate.getTime() < 0){
+    throw('זמני משמרת לא תקינים')
+  }
   //create shift:
   const data = {
     start: startDate.getTime(),

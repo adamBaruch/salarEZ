@@ -81,23 +81,36 @@ export default {
     endDateInit() {
       return this.item.startDate;
     },
-    filled() {
-      return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
+    filled: {
+      get() {
+        return this.item.startDate && this.item.endDate
+          && this.item.startTimeFormat && this.item.endTimeFormat
+      },
+      set(){}
     },
     ...mapState('shifts', ['shifts', 'editedShift', 'editedShiftId', 'userInfo'])
   },
   methods: {
     onSubmit() {
       if (this.userInfo && this.userInfo.wage) {
-        this.calculateShift();
-        this.setEditedShift(this.item);
-        if (this.item.id) {
-          this.updateShift();
-          this.$router.push('/home').catch(() => {
-          });
-        } else {
-          this.insertShift(this.item);
-          this.onReset();
+        try{
+          const shift = this.calculateShift();
+          this.setEditedShift(shift);
+          if (this.$route.params.id) {
+            shift.id = this.$route.params.id
+            this.updateShift(shift);
+            this.$router.push('/').catch(() => {
+            });
+          } else {
+            this.insertShift(shift);
+            this.onReset();
+          }
+        }catch (err){
+          this.$q.dialog({
+            title: 'שגיאה',
+            message: err
+          }).onOk(() => {
+          })
         }
       } else {
         //dialog to be opened
@@ -105,7 +118,7 @@ export default {
       }
     },
     calculateShift() {
-      utills.makeShiftFromForm(this.item, this.userInfo.wage)
+        return utills.makeShiftFromForm(this.item, this.userInfo.wage)
     },
     onReset() {
       for (const key in this.item) {

@@ -6,7 +6,6 @@
 
 <script>
 import Form from "../components/Form";
-//import dataFunc from "../middleware/dataFunc";
 
 export default {
   name: "Update",
@@ -15,7 +14,7 @@ export default {
   },
   methods:{
     gotoHome (){
-      this.$router.push('/home').catch(() => {});
+      this.$router.push('/').catch(() => {});
     }
   }
 }

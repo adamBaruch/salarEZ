@@ -2,7 +2,6 @@ export default {
   shifts: {},
   editedShiftId: '',
   editedShiftDate: {},
-  newShift: {},
   editedShift: {
     day: '',
     month: '',

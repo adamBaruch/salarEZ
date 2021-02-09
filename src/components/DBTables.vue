@@ -71,7 +71,6 @@
           <q-td><b>{{ income.toFixed(2) }}</b></q-td>
         </q-tr>
       </template>
-
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -83,7 +82,6 @@
           </q-th>
         </q-tr>
       </template>
-
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td auto-width v-show="$q.screen.lt.sm">
@@ -154,7 +152,7 @@ export default {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1,
       day: new Date().getDate(),
-      finishedLoading: false,
+      finishedLoading: false
     }
   },
   computed: mapState('shifts', [

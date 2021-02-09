@@ -14,16 +14,7 @@
           salarEZ
         </q-toolbar-title>
 
-        <i
-          class="fas fa-sign-out-alt fa-2x"
-          @click="signOut">
-          <q-tooltip
-            transition-show="scale"
-            transition-hide="scale"
-          >
-            התנתק
-          </q-tooltip>
-        </i>
+
 
       </q-toolbar>
     </q-header>
@@ -114,26 +105,32 @@ const linksData = [
     title: 'אודות',
     caption: '',
     icon: 'info',
-    link: 'about'
+    link: '/about'
   },
   {
     title: 'תלוש',
     caption: '',
     icon: 'fas fa-image',
-    link: 'upload'
+    link: '/upload'
   },
   {
     title: 'משמרות',
     caption: '',
     icon: 'event_note',
-    link: 'my_shifts'
+    link: '/my_shifts'
   },
   {
-    title: 'התנתקות',
+    title: 'הגדרות',
     caption: '',
-    icon: 'fas fa-sign-out-alt',
-    link: 'logout'
+    icon: 'settings',
+    link: '/settings'
   },
+  // {
+  //   title: 'התנתקות',
+  //   caption: '',
+  //   icon: 'fas fa-sign-out-alt',
+  //   link: 'logout'
+  // },
 
 ];
 
@@ -150,14 +147,7 @@ export default {
     }
   },
   methods: {
-    signOut() {
-      const self = this;
-      firebaseAuth.signOut().then(() => {
-        localStorage.removeItem('userId')
-        self.$router.push('/b/login').catch(() => {
-        });
-      })
-    },
+
     goTo(route) {
       this.$router.push(route).catch(() => {
       });
