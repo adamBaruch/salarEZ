@@ -8,38 +8,27 @@ function digitizeSingle(time) {
   return time > 9 ? time : '0' + time
 }
 
-function toMinutes(hours) {
-  return Math.ceil(((hours < 1.0) ? hours : (hours % Math.floor(hours))) * 60);
-}
+// function toMinutes(hours) {
+//   return Math.ceil(((hours < 1.0) ? hours : (hours % Math.floor(hours))) * 60);
+// }
 
-function calcDuration(s, e) {
-  const startHour= Number.parseInt(s[0]);
-  const startMinute= Number.parseInt(s[1]);
-  const endHour= Number.parseInt(e[0]);
-  const endMinute= Number.parseInt(e[1]);
-  const minutes = (endMinute - startMinute ? endMinute -startMinute : 60 -endMinute +startMinute)*60;
-  const subHours = minutes < 0 ? 1 : 0;
-  const hours = (endHour - startHour ? endHour -startHour : 24 -endHour +startHour)*3600;
-  return (hours + minutes -subHours)*1000
-}
-
-function paydayCalc(overSettings, hours, wage) {
-  let sum = 0;
-  for (const wave of overSettings) {
-    if (hours > 0) {
-      if (hours > wave.numOfHours) {
-        sum += wave.numOfHours * wave.percentage * wage;
-        hours -= wave.numOfHours;
-      } else {
-        sum += hours * wave.percentage * wage;
-        break;
-      }
-    } else {
-      break;
-    }
-  }
-  return sum;
-}
+// function paydayCalc(overSettings, hours, wage) {
+//   let sum = 0;
+//   for (const wave of overSettings) {
+//     if (hours > 0) {
+//       if (hours > wave.numOfHours) {
+//         sum += wave.numOfHours * wave.percentage * wage;
+//         hours -= wave.numOfHours;
+//       } else {
+//         sum += hours * wave.percentage * wage;
+//         break;
+//       }
+//     } else {
+//       break;
+//     }
+//   }
+//   return sum;
+// }
 
 function generatePayday(duration,wage){
   return duration/3600000*wage;
@@ -65,33 +54,36 @@ function makeShiftFromClock(data,wage) {
   }
 }
 
-function makeShiftFromForm(data,wage){
-  const startTimeArr = data.startTimeFormat.split(":");
-  const endTimeArr = data.endTimeFormat.split(":");
-  const dateArr = data.date.split("-")
-  const overSettings = [
-    {numOfHours: 8, percentage: 1},
-    {numOfHours: 2, percentage: 1.25},
-    {numOfHours: 8, percentage: 1.5}
-  ]
-  data.year = Number.parseInt(dateArr[0]);
-  data.month = Number.parseInt(dateArr[1]);
-  data.day = Number.parseInt(dateArr[2]);
-  data.date = data.day +'/' + data.month + '/' + data.year
-  //this.item.start = Number.parseFloat(startTimeArr[0]) + Number.parseFloat(startTimeArr[1]) / 60;
-  //this.item.end = Number.parseFloat(endTimeArr[0]) + Number.parseFloat(endTimeArr[1]) / 60;
-  data.duration = calcDuration(startTimeArr, endTimeArr);
-  data.payday = paydayCalc(overSettings, data.duration, wage);
-  data.durationTimeFormat = digitize(data.duration, toMinutes(data.duration));
+function makeShiftFromForm(item,wage){
+  //initialize data:
+  const startTimeArr = item.startTimeFormat.split(":");
+  const startHour = Number.parseInt(startTimeArr[0]);
+  const startMinute = Number.parseInt(startTimeArr[1]);
+  const endTimeArr = item.endTimeFormat.split(":");
+  const endHour = Number.parseInt(endTimeArr[0]);
+  const endMinute = Number.parseInt(endTimeArr[1]);
+  const startDateArr = item.startDate.split("-")
+  const startYear = Number.parseInt(startDateArr[0]);
+  const startMonth = Number.parseInt(startDateArr[1]);
+  const startDay = Number.parseInt(startDateArr[2]);
+  const endDateArr = item.startDate.split("-");
+  const endYear = Number.parseInt(endDateArr[0]);
+  const endMonth = Number.parseInt(endDateArr[1]);
+  const endDay = Number.parseInt(endDateArr[2]);
 
-  return data;
+  const startDate = new Date(startYear,startMonth,startDay,startHour,startMinute,0,0);
+  const endDate =new Date(endYear,endMonth,endDay,endHour,endMinute,0,0);
+  //create shift:
+  const data = {
+    start: startDate.getTime(),
+    end: endDate.getTime(),
+    duration: endDate.getTime() - startDate.getTime()
+  };
+  return makeShiftFromClock(data,wage)
 }
 
 export default {
   digitize,
-  toMinutes,
-  calcDuration,
-  paydayCalc,
   digitizeSingle,
   makeShiftFromClock,
   makeShiftFromForm

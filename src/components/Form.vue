@@ -1,19 +1,32 @@
 <template>
-  <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md constrain">
-    <q-input
-      filled
-      :readonly="hasId"
-      type="date"
-      v-model="item.date"
-      label="תאריך *"
-      stack-label
-      style="width: 350px"
-    />
-    <q-input filled type="time" v-model="item.startTimeFormat"
-             label="התחלת משמרת *"
-             stack-label/>
-    <q-input filled type="time" v-model="item.endTimeFormat" label="סיום משמרת *"
-             stack-label/>
+  <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md constrain column">
+    <span>התחלת משמרת</span>
+    <div class="row q-gutter-sm">
+      <q-input
+        filled
+        :readonly="hasId"
+        type="date"
+        v-model="item.startDate"
+        label="תאריך *"
+        stack-label
+      />
+      <q-input filled type="time" v-model="item.startTimeFormat"
+               label="שעה*"
+               stack-label/>
+    </div>
+    <span>סיום משמרת</span>
+    <div class="row q-gutter-sm">
+      <q-input
+        filled
+        :readonly="hasId"
+        type="date"
+        v-model="item.endDate"
+        label="תאריך *"
+        stack-label
+      />
+      <q-input filled type="time" v-model="item.endTimeFormat" label="שעה*"
+               stack-label/>
+    </div>
     <div class="row flex-center">
       <q-btn :label="item.id ? 'עדכן' : 'הוסף'"
              :disable="!filled"
@@ -33,6 +46,8 @@ export default {
   data() {
     return {
       item: {
+        endDate: '',
+        startDate: '',
         date: '',
         day: '',
         month: '',
@@ -63,12 +78,11 @@ export default {
     }
   },
   computed: {
-    filled: {
-      get() {
-        return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
-      },
-      set() {
-      }
+    endDateInit() {
+      return this.item.startDate;
+    },
+    filled() {
+      return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
     },
     ...mapState('shifts', ['shifts', 'editedShift', 'editedShiftId', 'userInfo'])
   },
@@ -79,7 +93,8 @@ export default {
         this.setEditedShift(this.item);
         if (this.item.id) {
           this.updateShift();
-          this.$router.push('/home').catch(() => {});
+          this.$router.push('/home').catch(() => {
+          });
         } else {
           this.insertShift(this.item);
           this.onReset();
@@ -90,8 +105,8 @@ export default {
       }
     },
     calculateShift() {
-      utills.makeShiftFromForm(this.item,this.userInfo.wage)
- },
+      utills.makeShiftFromForm(this.item, this.userInfo.wage)
+    },
     onReset() {
       for (const key in this.item) {
         this.item[key] = '';
@@ -101,12 +116,14 @@ export default {
       return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
     },
     ...mapActions('shifts', ['insertShift', 'updateShift', 'resetShift', 'setEditedShift', 'getUserInfo', 'setEditedShiftDate'])
-  }
+  },
+  watch: {
+    endDateInit: function (newVal1) {
+      this.item.endDate = newVal1
+    }
+  },
 }
 </script>
 
 <style scoped>
-.form {
-
-}
 </style>

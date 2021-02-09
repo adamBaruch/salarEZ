@@ -6,13 +6,6 @@
            color="secondary"
            icon="fas fa-arrow-right"
            @click="goBack"/>
-    <q-btn  rounded
-            label="הוספת משמרת"
-            class="fixed-top-right"
-            icon-right="fas fa-stopwatch"
-            color="primary"
-            style="margin-top: 55px"
-            @click="goTo('/')"/>
     <DBTables/>
   </q-page>
 </template>
@@ -24,9 +17,6 @@ export default {
   name: "my_shifts",
   components: {DBTables},
   methods: {
-    goTo(route) {
-      this.$router.push(route).catch(() => {})
-    },
     goBack() {
       this.$router.back()
     }

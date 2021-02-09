@@ -120,9 +120,15 @@
         </q-tr>
       </template>
     </q-table>
-    <h5 v-if="finishedLoading && data.length===0" >
+    <h5 v-if="finishedLoading && data.length === 0" >
       אין משמרות להצגה
     </h5>
+    <q-btn  rounded
+            label="הוספת משמרת"
+            class="q-ma-xl justify-end"
+            icon-right="fas fa-stopwatch"
+            color="primary"
+            @click="goTo('/')"/>
   </div>
 </template>
 
@@ -130,6 +136,8 @@
 </style>
 
 <script>
+import {mapState, mapActions} from 'vuex'
+
 export default {
   name: 'DBTables',
   data() {
@@ -157,17 +165,21 @@ export default {
     'totalHours'
   ]),
   async created() {
-    await this.getShifts()
+    if(this.shifts.length !==0)
+      await this.getShifts()
     if (this.shifts.hasOwnProperty(this.year)) {
       if (this.shifts[this.year].hasOwnProperty(this.month)) {
         this.data = this.shifts[this.year][this.month]
       }
     }
-    this.finishedLoading = true
+    this.finishedLoading = true;
   },
   methods: {
     deleteRow(row) {
       this.deleteShift({id:row.id,date:row.date});
+    },
+    goTo(route) {
+      this.$router.push(route).catch(() => {})
     },
     updateRow(row) {
       const dateObj = {year: row.year, month: row.month, day: row.day}
@@ -177,11 +189,10 @@ export default {
       this.$router.push('/update/' + row.id).catch(() => {
       });
     },
-    ...mapActions('shifts', ['getShifts', 'deleteShift', 'updateShift', 'setEditedShiftId', 'setEditedShift', 'setEditedShiftDate'])
+    ...mapActions('shifts', ['getShifts', 'deleteShift', 'setEditedShiftId',
+      'setEditedShift', 'setEditedShiftDate'])
   },
 }
-
-import {mapState, mapActions} from 'vuex'
 </script>
 
 <style scoped>
@@ -198,7 +209,7 @@ import {mapState, mapActions} from 'vuex'
 
 .my-sticky-virtscroll-table
   /* height or max-height is important */
-  max-height: 600px
+  max-height: 500px
 
   .q-table__top,
   .q-table__bottom,
