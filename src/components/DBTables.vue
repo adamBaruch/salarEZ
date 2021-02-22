@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-sm flex flex-center" style="max-width: 800px" >
+  <div class="q-pa-sm" style="max-width: 800px">
     <q-markup-table v-if="!finishedLoading">
       <thead>
       <tr>
@@ -47,6 +47,39 @@
       </tr>
       </tbody>
     </q-markup-table>
+    <div
+      class="row q-mb-md q-px-sm q-gutter-md"
+      v-if="data.length!==0"
+    >
+      <span class="col-1 content-center"><q-space/><b> מיון: </b><q-space/></span>
+      <q-select
+        dense
+        options-dense
+        v-if="data.length!==0"
+        v-model="yearFilter"
+        label="שנה"
+        :options="yearOptions"
+        style="width: 80px"
+        behavior="menu"
+      />
+      <q-select
+        v-if="data.length!==0"
+        dense
+        options-dense
+        v-model="monthFilter"
+        label="חודש"
+        :options="monthOptions"
+        style="width: 80px"
+        behavior="menu"
+      />
+      <q-btn
+        text-color="primary"
+        flat
+        @click="filter()"
+      >
+        מיין
+      </q-btn>
+    </div>
     <q-table
       v-if="data.length!==0"
       title="משמרות"
@@ -56,6 +89,7 @@
       row-key="id"
       class="my-sticky-virtscroll-table"
       :pagination="{rowsPerPage: 0}"
+      :hide-pagination="true"
       virtual-scroll
       :virtual-scroll-item-size="30"
       binary-state-sort
@@ -85,15 +119,27 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td auto-width v-show="$q.screen.lt.sm">
-            <q-btn size="sm" color="primary" round dense @click="props.expand = !props.expand"
+            <q-btn size="sm"
+                   color="primary"
+                   round dense
+                   @click="props.expand = !props.expand"
                    :icon="props.expand ? 'remove' : 'add'"/>
           </q-td>
           <q-td v-show="$q.screen.gt.xs" key="actions" :props="props">
-            <q-btn round size="xs" color="deep-orange" icon="delete" @click="deleteRow(props.row)"/>
-            <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)" class="q-ma-xs"/>
+            <q-btn round
+                   size="xs"
+                   color="deep-orange"
+                   icon="delete"
+                   @click="deleteRow(props.row)"/>
+            <q-btn round
+                   size="xs"
+                   color="grey"
+                   icon="edit"
+                   class="q-ma-xs"
+                   @click="updateRow(props.row)" />
           </q-td>
           <q-td key="date" :props="props">
-            {{ props.row.dateFormat}}
+            {{ props.row.dateFormat }}
           </q-td>
           <q-td key="start" :props="props">
             {{ props.row.startTimeFormat }}
@@ -110,23 +156,38 @@
         </q-tr>
         <q-tr v-show="props.expand" :props="props.row">
           <q-td key="actions" :props="props">
-            <q-btn round size="xs" color="deep-orange" icon="delete" @click="deleteRow(props.row)"/>
+            <q-btn
+              round
+              size="xs"
+              color="deep-orange"
+              icon="delete"
+              @click="deleteRow(props.row)"/>
           </q-td>
           <q-td>
-            <q-btn round size="xs" color="grey" icon="edit" @click="updateRow(props.row)"/>
+            <q-btn
+              round
+              size="xs"
+              color="grey"
+              icon="edit"
+              @click="updateRow(props.row)"/>
           </q-td>
         </q-tr>
       </template>
     </q-table>
-    <h5 v-if="finishedLoading && data.length === 0" >
+    <h5 v-if="finishedLoading && data.length === 0">
       אין משמרות להצגה
     </h5>
-    <q-btn  rounded
-            label="הוספת משמרת"
-            class="q-ma-xl justify-end"
-            icon-right="fas fa-stopwatch"
-            color="primary"
-            @click="goTo('/')"/>
+    <div class="row" style="width: 100%">
+      <q-space/>
+      <q-btn rounded
+             fixed-center
+             label="הוספת משמרת"
+             class="q-my-xl q-px-sm"
+             icon-right="fas fa-stopwatch"
+             text-color="primary"
+             @click="goTo('/')"
+      />
+    </div>
   </div>
 </template>
 
@@ -136,6 +197,17 @@
 <script>
 import {mapState, mapActions} from 'vuex'
 
+const years = [];
+const months = [];
+for (let i = 0; i <= 15; i++) {
+  years.push(i + 2010);
+  if (i < 13)
+    if (i === 0)
+      months.push('הכל')
+    else
+      months.push(i);
+
+}
 export default {
   name: 'DBTables',
   data() {
@@ -152,7 +224,11 @@ export default {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1,
       day: new Date().getDate(),
-      finishedLoading: false
+      finishedLoading: false,
+      yearFilter: '2021',
+      monthFilter: new Date().getMonth() + 1,
+      yearOptions: years,
+      monthOptions: months
     }
   },
   computed: mapState('shifts', [
@@ -163,12 +239,11 @@ export default {
     'totalHours'
   ]),
   async created() {
-    if(this.shifts.length !==0)
-      await this.getShifts()
-    if (this.shifts.hasOwnProperty(this.year)) {
-      if (this.shifts[this.year].hasOwnProperty(this.month)) {
-        this.data = this.shifts[this.year][this.month]
-      }
+    if (this.shifts.length !== 0){
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth()+1;
+      await this.setDataTable({year,month});
     }
     this.finishedLoading = true;
   },
@@ -177,15 +252,31 @@ export default {
       this.deleteShift(row);
     },
     goTo(route) {
-      this.$router.push(route).catch(() => {})
+      this.$router.push(route).catch(() => {
+      })
     },
     updateRow(row) {
       this.setEditedShift(row);
       this.$router.push('/update/' + row.id).catch(() => {
       });
     },
-    ...mapActions('shifts', ['getShifts', 'deleteShift', 'setEditedShiftId',
-      'setEditedShift', 'setEditedShiftDate'])
+    async setDataTable({year,month}){
+      await this.getShifts({year,month})
+      if (this.shifts.hasOwnProperty(year)) {
+        if (this.shifts[year].hasOwnProperty(month)) {
+          this.data = this.shifts[year][month]
+        }
+      }
+    },
+    async filter(){
+      const filter = {
+        year: this.yearFilter,
+        month: this.monthFilter
+      }
+      await this.getShifts(filter);
+      await this.setDataTable(filter);
+    },
+    ...mapActions('shifts', ['getShifts', 'deleteShift', 'setEditedShift', 'filterShifts'])
   },
 }
 </script>
@@ -199,6 +290,7 @@ export default {
 .q-table body tr {
   padding: 20px 20px;
 }
+
 </style>
 <style lang="sass">
 
@@ -206,15 +298,18 @@ export default {
   /* height or max-height is important */
   max-height: 500px
 
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th /* bg color is important for th; just specify one */
+  .q-table__top, .q-table__bottom, thead tr:first-child th
+    /* bg color is important for th; just specify one */
     background-color: #fff
 
   thead tr th
     position: sticky
     z-index: 1
   /* this will be the loading indicator */
+
+
+
+
 
 
   thead tr:last-child th

@@ -17,7 +17,6 @@
           התחלה
         </template>
       </q-input>
-
       <q-input filled type="time" v-model="item.endTimeFormat" label="שעה"
                stack-label>
         <template v-slot:prepend>
@@ -55,7 +54,6 @@ export default {
     if (this.$route.params.id)
       for (const key in this.editedShift)
         this.item[key] = this.editedShift[key];
-    console.log(this.$route.params.id);
   },
   computed: {
     filled: {

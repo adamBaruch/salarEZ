@@ -2,25 +2,22 @@ import firebaseApi from '../../middleware/firebaseApi'
 
 export default {
 
-  getShifts: async ({commit}) => {
-    const shifts = await firebaseApi.getUserData();
-    let stateShifts = {}
+  getShifts: async ({commit}, {year, month}) => {
+    const shifts = await firebaseApi.getShiftsByMonth(year, month);
+    let stateShifts = {[year]: {[month]:[]}}
     let income = 0;
     let time = 0;
-    for (const year in shifts) {
-      if (!stateShifts.hasOwnProperty(year)) stateShifts[year] = {}
-      for (const month in shifts[year]) {
-        if (!stateShifts[year].hasOwnProperty(month)) stateShifts[year][month] = [];
-        for (const day in shifts[year][month]) {
-          for (const key in shifts[year][month][day]) {
-            let shift = shifts[year][month][day][key]; //new stuff 'let'
+    for (const day in shifts) {
+      if (shifts.hasOwnProperty(day))
+        for (const key in shifts[day]) {
+          if (shifts[day].hasOwnProperty(key)){
+            let shift = shifts[day][key];
             shift.id = key;
             income += shift.payday;
             time += shift.duration / 3600000;
             stateShifts[year][month].push(shift);
           }
         }
-      }
     }
     commit('setIncome', income);
     commit('setTotalHours', time);
@@ -44,11 +41,11 @@ export default {
   deleteShift: ({commit, state}, shift) => {
     const dateArr = shift.dateFormat.split('/')
     firebaseApi.deleteShift(shift.id, dateArr);
-    commit('deleteShift', {id:shift.id, dateArr});
+    commit('deleteShift', {id: shift.id, dateArr});
   },
 
   insertShift: async ({commit, state}, shift) => {
-    shift.id = await firebaseApi.writeData(shift);
+    shift.id = await firebaseApi.insertShift(shift);
     commit('insertShift', shift);
   },
 
@@ -78,5 +75,9 @@ export default {
     setTimeout(() => {
       commit('isDisabled', false);
     }, 500);
+  },
+
+  async filterShifts({commit}, {year, month}) {
+    await firebaseApi.getShifts(year, month);
   }
 }

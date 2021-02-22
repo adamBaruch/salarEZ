@@ -13,9 +13,6 @@
         <q-toolbar-title>
           salarEZ
         </q-toolbar-title>
-
-
-
       </q-toolbar>
     </q-header>
 
@@ -124,14 +121,7 @@ const linksData = [
     caption: '',
     icon: 'settings',
     link: '/settings'
-  },
-  // {
-  //   title: 'התנתקות',
-  //   caption: '',
-  //   icon: 'fas fa-sign-out-alt',
-  //   link: 'logout'
-  // },
-
+  }
 ];
 
 export default {

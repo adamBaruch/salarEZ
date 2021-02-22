@@ -1,14 +1,19 @@
 import {firebaseDb, firebaseStorage} from 'boot/firebase';
 
-async function getUserData() {
-  let userId = await localStorage.getItem('userId');
+async function getShiftsByMonth(year,month) {
+  let userId = localStorage.getItem('userId');
   if (userId) {
-    const res = await firebaseDb.ref(`users/${userId}/shifts`).once('value')
-    return res.val();
+     const shifts = await firebaseDb.ref('users/' + userId  + '/shifts/' + year + '/' + month).once('value')
+    return shifts.val();
   }
 }
 
-function writeData(shift) {
+async function getShiftByYear(year){
+  const shifts = await firebaseDb.ref('users/' + userId  + '/shifts/' + year).once('value');
+  return shifts.val();
+}
+
+function insertShift(shift) {
   return  firebaseDb.ref('users/' + window.userId + '/shifts/' +
     shift.year + '/' + shift.month + '/' + shift.day).push(shift).key;
 }
@@ -24,7 +29,7 @@ function updateData(newData) {
 }
 
 function uploadPhoto(photo, callback) {
-  firebaseStorage.ref('users/' + window.userId + '/photos/' + photo[0].name).put(photo[0]) //.snapshot.
+  firebaseStorage.ref('users/' + window.userId + '/photos/' + photo[0].name).put(photo[0])
     .on('value', snapshot => {
       callback(snapshot.bytesTransferred * 100 / snapshot.totalBytes)
     })
@@ -43,13 +48,14 @@ function setUserInfo(prop, value) {
 }
 
 export default {
-  getUserData,
-  writeData,
+  getShiftsByMonth,
+  insertShift,
   deleteShift,
   updateData,
   uploadPhoto,
   getUserInfo,
-  setUserInfo
+  setUserInfo,
+  getShiftByYear
 }
 
 

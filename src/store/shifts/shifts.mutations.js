@@ -1,7 +1,9 @@
+const merge = require('lodash/merge');
+
 export default {
 
   setShifts: ((state, shifts) => {
-    state.shifts = shifts;
+    state.shifts = merge(shifts,state.shifts);
   }),
 
   resetEditedShift: ((state) => {
