@@ -234,7 +234,6 @@ export default {
   computed: mapState('shifts', [
     'shifts',
     'editedShift',
-    'editedShiftId',
     'income',
     'totalHours'
   ]),

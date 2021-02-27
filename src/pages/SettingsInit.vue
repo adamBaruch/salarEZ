@@ -32,7 +32,7 @@
 
 <script>
 import {mapActions} from "vuex";
-
+import utils from "../middleware/utill"
 export default {
   name: "SettingsCarousel",
   data() {
@@ -43,10 +43,11 @@ export default {
   },
   methods: {
     forward() {
-      this.setWage(this.wage)
+      this.setWage(this.wage);
+      this.setOvertime(utils.defaultOvertimeSettings)
       this.$router.push('/').catch(() => {})
     },
-    ...mapActions('shifts', ['setWage'])
+    ...mapActions('shifts', ['setWage','setOvertime'])
   }
 }
 </script>

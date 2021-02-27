@@ -1,8 +1,5 @@
 export default {
-  buttonDisabled: false,
   shifts: {},
-  editedShiftId: '',
-  editedShiftDate: {},
   editedShift: {
     day: '',
     month: '',
@@ -17,9 +14,11 @@ export default {
     durationTimeFormat: '',
   },
   userInfo: {
+    overtimeSettings: [],
     startTime: null,
     wage: ''
   },
+  buttonDisabled: false,
   income: 0,
   totalHours: 0,
   overtimeSettings: ''

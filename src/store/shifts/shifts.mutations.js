@@ -3,7 +3,7 @@ const merge = require('lodash/merge');
 export default {
 
   setShifts: ((state, shifts) => {
-    state.shifts = merge(shifts,state.shifts);
+    state.shifts = merge(shifts, state.shifts);
   }),
 
   resetEditedShift: ((state) => {
@@ -12,7 +12,7 @@ export default {
     }
   }),
 
-  updateShift: ((state, {shift,index}) => {
+  updateShift: ((state, {shift, index}) => {
     state.shifts[shift.year][shift.month].splice(index, 1, shift);
   }),
 
@@ -65,7 +65,27 @@ export default {
     state.userInfo.wage = wage;
   }),
 
-  isDisabled: ((state, bool)=>{
+  isDisabled: ((state, bool) => {
     state.buttonDisabled = bool;
+  }),
+
+  setOvertime: ((state, overtime) => {
+    state.userInfo.overtimeSettings = overtime;
+  }),
+  resetShifts: ((state) => {
+    state.shifts = [];
+  }),
+  resetUserInfo: ((state) => {
+    state.userInfo = {
+      overtimeSettings: [],
+      startTime: null,
+      wage: ''
+    }
+  }),
+  resetOthers: ((state) => {
+    state.buttonDisabled = false;
+    state.income = 0;
+    state.totalHours = 0;
+    state.overtimeSettings = '';
   })
 }

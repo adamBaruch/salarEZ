@@ -5,22 +5,52 @@
       <q-input
         filled
         dense
+        :disable="disableWageEdit"
         v-model="wage"
-        label="שכר שעתי חדש *"
+        label="שכר שעתי*"
         :lazy-rules="true"
         :rules="[ val => val && val.length > 0 || 'Please type something']"
-      />
-      <div>
+      >
+        <template v-slot:after>
+          <q-btn v-show="disableWageEdit"
+                 label="עריכה"
+                 flat
+                 @click="disableWageEdit=false"
+          />
+        </template>
+      </q-input>
+      <div v-show="!disableWageEdit" class="q-ma-none q-mx-md">
         <q-btn label="שמור" type="submit" color="primary"/>
         <q-btn label="בטל" type="reset" color="primary" flat class="q-ml-sm"/>
       </div>
     </q-form>
     <q-table
-      title="overtime"
+      class="q-ma-xs"
+      title="הגדרת שעות"
       :data="data"
       :columns="columns"
       row-key="id"
     >
+      <template v-slot:top-row="props">
+        <q-td key="type">
+          {{ translate(baseRate.type) }}
+        </q-td>
+        <q-td key="hoursSum" align="center">
+          {{ baseRate.hoursSum }}
+          <q-popup-edit v-model="baseRate.hoursSum" buttons>
+            <q-input type="number" v-model="baseRate.hoursSum" dense autofocus counter/>
+          </q-popup-edit>
+        </q-td >
+        <q-td key="percentage" align="center">
+          {{ baseRate.percentage }}
+          <q-popup-edit v-model="baseRate.percentage" buttons>
+            <q-input type="number" v-model="baseRate.percentage" dense autofocus counter/>
+          </q-popup-edit>
+        </q-td >
+        <q-td align="center">
+          {{ userInfo.wage }}
+        </q-td>
+      </template>
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="type">
@@ -43,32 +73,26 @@
           </q-td>
         </q-tr>
       </template>
-      <template v-slot:top-row="props">
-          <q-td key="type">
-            {{ translate(baseRate.type) }}
-          </q-td>
-          <q-td key="hoursSum" align="center">
-            {{ baseRate.hoursSum }}
-            <q-popup-edit v-model="baseRate.hoursSum" buttons>
-              <q-input type="number" v-model="baseRate.hoursSum" dense autofocus counter/>
-            </q-popup-edit>
-          </q-td >
-          <q-td key="percentage" align="center">
-            {{ baseRate.percentage }}
-            <q-popup-edit v-model="baseRate.percentage" buttons>
-              <q-input type="number" v-model="baseRate.percentage" dense autofocus counter/>
-            </q-popup-edit>
-          </q-td >
-          <q-td align="center">
-            {{ userInfo.wage }}
-          </q-td>
-      </template>
       <template v-slot:bottom>
         <q-space/>
         <q-btn color="primary" dense label="הוסף שורה" @click="addRow"/>
       </template>
-
     </q-table>
+    <div class="row">
+    <q-btn
+      class="q-ma-md"
+      color="primary"
+      @click="saveOvertimeSettings">
+      שמור שינויים
+    </q-btn>
+    <q-btn
+      class="q-ma-md"
+      text-color="primary"
+      flat
+      @click="resetSettings">
+      בטל שינויים
+    </q-btn>
+    </div>
     <q-btn
       class="q-ma-lg"
       color="primary"
@@ -87,24 +111,22 @@ import {firebaseAuth} from "boot/firebase";
 export default {
   data() {
     return {
+      disableWageEdit: true,
       wage: null,
       baseRate: {
-        type: 'baseRate',
-        hoursSum: 8,
-        percentage: 100
+        type: '',
+        hoursSum: 0,
+        percentage: 0
       },
-      data: [
-        {
-          type: 'overtime',
-          hoursSum: 2,
-          percentage: 125
-        },
-        {
-          type: 'overtime',
-          hoursSum: 2,
-          percentage: 150
-        }
-      ],
+      data: [{
+        type: '',
+        hoursSum: 0,
+        percentage: 0
+      },{
+        type: '',
+        hoursSum: 0,
+        percentage: 0
+      }],
       columns: [
         {
           name: 'type',
@@ -120,6 +142,14 @@ export default {
   },
   computed: mapState('shifts', ['shifts', 'userInfo']),
 
+  created() {
+    if(this.userInfo.wage === "") {
+      setTimeout(() => {
+        this.resetSettings();
+        this.wage = this.userInfo.wage
+      },1200)
+    } else this.resetSettings();
+  },
   methods: {
     translate(val) {
       switch (val) {
@@ -132,24 +162,24 @@ export default {
       }
     },
     currRate(percentage){
-      return this.userInfo.wage*percentage/100
+      return this.userInfo.wage * percentage/100
     },
     signOut() {
       //todo: reset state
       const self = this;
       firebaseAuth.signOut().then(() => {
         localStorage.removeItem('userId')
+        this.resetState();
         self.$router.push('/b/login').catch(() => {
         });
       })
     },
     onSubmit() {
+      this.disableWageEdit = true
       this.setWage(this.wage);
-      this.$router.push('/').catch(() => {
-      });
     },
     onReset() {
-      this.name = null
+      this.disableWageEdit = true
     },
     addRow() {
       const addRow = {
@@ -162,7 +192,15 @@ export default {
     removeRow(index) {
       this.data.splice(index, 1);
     },
-    ...mapActions('shifts', ['setWage'])
+    resetSettings(){
+      this.baseRate = this.userInfo.overtimeSettings[0];
+      this.data = [...this.userInfo.overtimeSettings.slice(1)];
+    },
+    saveOvertimeSettings(){
+      const overtime = [this.baseRate,...this.data]
+      this.setOvertime(overtime);
+    },
+    ...mapActions('shifts', ['setWage','setOvertime','resetState'])
   }
 }
 </script>

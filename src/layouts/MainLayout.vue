@@ -19,6 +19,7 @@
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
+      :width="200"
       bordered
       content-class="bg-grey-1"
     >

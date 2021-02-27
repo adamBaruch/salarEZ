@@ -55,7 +55,7 @@ export default {
       started: false
     }
   },
-  computed: mapState('shifts', ['shifts', 'editedShift', 'editedShiftId', 'userInfo']),
+  computed: mapState('shifts', ['shifts', 'editedShift', 'userInfo']),
   created() {
     this.getUserInfo()
       .then(() => {
@@ -118,7 +118,7 @@ export default {
       this.started = false;
       this.item.end = new Date().getTime();
       this.item.duration = this.item.end - this.item.start;
-      this.insertShift(utills.makeShiftFromClock(this.item,this.userInfo.wage));
+      this.insertShift(utills.makeShiftFromClock(this.item,this.userInfo.wage,this.userInfo.overtimeSettings));
       this.item = {};
       this.saveStartTime(null);
       this.clearDisplay();

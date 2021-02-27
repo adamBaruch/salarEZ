@@ -82,7 +82,7 @@ export default {
       }
     },
     calculateShift() {
-        return utills.makeShiftFromForm(this.item, this.userInfo.wage)
+        return utills.makeShiftFromForm(this.item, this.userInfo.wage,this.userInfo.overtimeSettings)
     },
     resetForm() {
       for (const key in this.item) {

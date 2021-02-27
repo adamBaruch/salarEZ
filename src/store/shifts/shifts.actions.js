@@ -53,22 +53,22 @@ export default {
     commit('setEditedShift', shift);
   },
 
-  async saveStartTime({commit, state}, time) {
+  saveStartTime: async ({commit, state}, time)=> {
     await firebaseApi.setUserInfo('startTime', time);
     commit('setStartTime', time);
   },
 
-  async getUserInfo({commit}) {
+  getUserInfo: async ({commit}) =>{
     const userInfo = await firebaseApi.getUserInfo();
     commit('setUserInfo', userInfo);
   },
 
-  async setWage({commit}, wage) {
+  setWage: async ({commit}, wage) => {
     await firebaseApi.setUserInfo('wage', wage);
     commit('setWage', wage);
   },
 
-  handleButtonClick({state, commit}, func) {
+  handleButtonClick: ({state, commit}, func) => {
     if (state.buttonDisabled) return;
     func();
     commit('isDisabled', true);
@@ -79,5 +79,17 @@ export default {
 
   async filterShifts({commit}, {year, month}) {
     await firebaseApi.getShifts(year, month);
+  },
+
+  setOvertime: ({commit},overtimeSettings) =>{
+    commit('setOvertime',overtimeSettings);
+    firebaseApi.setUserInfo('overtimeSettings', overtimeSettings);
+  },
+
+  resetState: ({commit}) =>{
+    commit('resetEditedShift');
+    commit('resetShifts');
+    commit('resetUserInfo');
+    commit('resetOthers');
   }
 }

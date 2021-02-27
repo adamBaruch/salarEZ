@@ -44,7 +44,7 @@ function getUserInfo() {
 
 
 function setUserInfo(prop, value) {
-  return firebaseDb.ref('users/' + window.userId + '/userInfo/' + prop).set(value);
+  firebaseDb.ref('users/' + window.userId + '/userInfo/' + prop).set(value);
 }
 
 export default {

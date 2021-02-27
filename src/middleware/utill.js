@@ -1,4 +1,22 @@
 
+const defaultOvertimeSettings = [
+  {
+    type: 'baseRate',
+    hoursSum: 8,
+    percentage: 100
+  },
+  {
+    type: 'overtime',
+    hoursSum: 2,
+    percentage: 125
+  },
+  {
+    type: 'overtime',
+    hoursSum: 2,
+    percentage: 150
+  }
+]
+
 function digitize(hours, minutes) {
   hours = Math.floor(hours);
   return (hours > 9 ? hours : '0' + Math.floor(hours)) + ':' + (minutes > 9 ? minutes : '0' + Math.floor(minutes));
@@ -12,29 +30,30 @@ function digitizeSingle(time) {
 //   return Math.ceil(((hours < 1.0) ? hours : (hours % Math.floor(hours))) * 60);
 // }
 
-// function paydayCalc(overSettings, hours, wage) {
-//   let sum = 0;
-//   for (const wave of overSettings) {
-//     if (hours > 0) {
-//       if (hours > wave.numOfHours) {
-//         sum += wave.numOfHours * wave.percentage * wage;
-//         hours -= wave.numOfHours;
-//       } else {
-//         sum += hours * wave.percentage * wage;
-//         break;
-//       }
-//     } else {
-//       break;
-//     }
-//   }
-//   return sum;
-// }
-
-function generatePayday(duration,wage){
-  return duration/3600000*wage;
+function paydayCalc(overtimeSettings, hours, wage) {
+  debugger
+  let sum = 0;
+  for (const wave of overtimeSettings) {
+    if (hours > 0) {
+      if (hours > wave.hoursSum) {
+        sum += wave.hoursSum * wave.percentage/100 * wage;
+        hours -= wave.hoursSum;
+      } else {
+        sum += hours * wave.percentage/100 * wage;
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+  return sum;
 }
 
-function makeShiftFromClock(data,wage) {
+// function generatePayday(duration,wage){
+//   return duration/3600000*wage;
+// }
+
+function makeShiftFromClock(data,wage,overtimeSettings) {
   const start = new Date(data.start);
   const end = new Date(data.end);
   const durationMinutes = ((data.duration/60000)%60).toFixed(0);
@@ -48,7 +67,7 @@ function makeShiftFromClock(data,wage) {
     end: data.end,
     endTimeFormat: digitize(end.getHours(), end.getMinutes()),
     month: start.getMonth() + 1,
-    payday: generatePayday(data.duration,wage),
+    payday: paydayCalc(overtimeSettings, data.duration/3600000,wage),
     start: data.start,
     startTimeFormat: digitize(start.getHours(), start.getMinutes()),
     year: start.getFullYear()
@@ -62,6 +81,7 @@ function timeFormatToObj(time){
     minute:Number.parseInt(timeArr[1])
   }
 }
+
 function dateFormatToArr(date){
   const dateArr = date.split('-')
   return{
@@ -70,6 +90,7 @@ function dateFormatToArr(date){
     year: Number.parseInt(dateArr[0]),
   }
 }
+
 function calcDuration(start,end){
   const hours = (end.hour - start.hour);
   const hoursInMillis = (hours < 0 ? 24 + hours : hours)*3600000;
@@ -78,7 +99,7 @@ function calcDuration(start,end){
   return hoursInMillis + minutesInMillis;
 }
 
-function makeShiftFromForm(item,wage){
+function makeShiftFromForm(item,wage,overtimeSettings){
   //initialize data:
   const start = timeFormatToObj(item.startTimeFormat);
   const end = timeFormatToObj(item.endTimeFormat);
@@ -92,7 +113,7 @@ function makeShiftFromForm(item,wage){
     end: startDate.getTime() + duration,
     duration: duration
   };
-  return makeShiftFromClock(data,wage)
+  return makeShiftFromClock(data,wage,overtimeSettings)
 }
 
 export default {
@@ -100,5 +121,7 @@ export default {
   digitizeSingle,
   makeShiftFromClock,
   makeShiftFromForm,
-  calcDuration
+  paydayCalc,
+  calcDuration,
+  defaultOvertimeSettings
 }
