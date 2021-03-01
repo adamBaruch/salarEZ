@@ -74,6 +74,7 @@
         </q-tr>
       </template>
       <template v-slot:bottom>
+        <q-btn color="primary" dense label="מחק שורה אחורה" @click="removeLastRow"/>
         <q-space/>
         <q-btn color="primary" dense label="הוסף שורה" @click="addRow"/>
       </template>
@@ -141,7 +142,6 @@ export default {
     }
   },
   computed: mapState('shifts', ['shifts', 'userInfo']),
-
   created() {
     if(this.userInfo.wage === "") {
       setTimeout(() => {
@@ -189,8 +189,8 @@ export default {
       }
       this.data.push(addRow);
     },
-    removeRow(index) {
-      this.data.splice(index, 1);
+    removeLastRow() {
+      this.data.pop();
     },
     resetSettings(){
       this.baseRate = this.userInfo.overtimeSettings[0];
