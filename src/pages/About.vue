@@ -1,5 +1,7 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <q-page class="flex flex-center">
+    <div>
+      <p>אפליקציה זו משמשת שכירים לחישוב המשכורת החודשית</p>
+    </div>
+  </q-page>
 </template>

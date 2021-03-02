@@ -1,12 +1,12 @@
 <template>
-<Form/>
+<ShiftData/>
 </template>
 
 <script>
-import Form from "../components/Form";
+import ShiftData from "components/ShiftData";
 export default {
 name: "AddShift",
-  components: {Form}
+  components: {ShiftData}
 }
 </script>
 

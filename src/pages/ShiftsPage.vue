@@ -6,16 +6,16 @@
            color="secondary"
            icon="fas fa-arrow-right"
            @click="goBack"/>
-    <DBTables/>
+    <ShiftsTable/>
   </q-page>
 </template>
 
 <script>
-import DBTables from "../components/DBTables";
+import ShiftsTable from "components/ShiftsTable";
 
 export default {
   name: "my_shifts",
-  components: {DBTables},
+  components: {ShiftsTable},
   methods: {
     goBack() {
       this.$router.back()

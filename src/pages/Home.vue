@@ -6,30 +6,27 @@
         spread
         class="my-custom-toggle"
         rounded
+        unelevated
         toggle-color="primary"
         color="white"
         text-color="primary"
         :options="this.options"
       />
     </div>
-      <clock v-if="secondModel" id="clock"/>
-      <Form v-else/>
+      <Clock v-if="secondModel" id="clock"/>
+      <ShiftData v-else/>
   </q-page>
 </template>
 
 <script>
-import Form from "../components/Form";
-import DBTables from "../components/DBTables";
-import clock from "../components/Clock";
-import ToggleBar from "../components/ToggleBar";
+import ShiftData from "components/ShiftData";
+import Clock from "../components/Clock";
 import {mapActions, mapState} from "vuex";
 
 
 export default {
   name: 'Home',
-  components: {
-    ToggleBar, DBTables, Form, clock
-  },
+  components: {ShiftData, Clock},
   data() {
     return {
       reload: false,
@@ -40,18 +37,14 @@ export default {
       ]
     }
   },
-  computed: mapState('shifts', [
-    'shifts'
-  ]),
-  methods: {
-    ...mapActions('shifts', ['getShifts'])
-  }
+  computed: mapState('shifts', ['shifts']),
+  methods: {...mapActions('shifts', ['getShifts'])}
 }
 </script>
 
 <style scoped>
 .my-custom-toggle {
-  border: 2px solid #3396f3;
+  border: 2px solid #a8b7c1;
 }
 
 #clock {

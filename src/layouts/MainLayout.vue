@@ -97,7 +97,6 @@ const fabs = [
     link: '/settings'
   }
 ]
-//todo: check about the little scroll that i cant get rid of
 const linksData = [
   {
     title: 'אודות',
@@ -133,7 +132,7 @@ export default {
       leftDrawerOpen: false,
       fabs: fabs,
       essentialLinks: linksData,
-      fabPos: [18, 18],
+      fabPos: [window.innerWidth-60, 18],
       draggingFab: false
     }
   },
