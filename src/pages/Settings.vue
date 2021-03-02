@@ -40,13 +40,13 @@
           <q-popup-edit v-model="baseRate.hoursSum" buttons>
             <q-input type="number" v-model="baseRate.hoursSum" dense autofocus counter/>
           </q-popup-edit>
-        </q-td >
+        </q-td>
         <q-td key="percentage" align="center">
           {{ baseRate.percentage }}
           <q-popup-edit v-model="baseRate.percentage" buttons>
             <q-input type="number" v-model="baseRate.percentage" dense autofocus counter/>
           </q-popup-edit>
-        </q-td >
+        </q-td>
         <q-td align="center">
           {{ userInfo.wage }}
         </q-td>
@@ -74,25 +74,25 @@
         </q-tr>
       </template>
       <template v-slot:bottom>
-        <q-btn color="primary" dense label="מחק שורה אחורה" @click="removeLastRow"/>
+        <q-btn color="secondary" dense label="מחק שורה אחרונה" @click="removeLastRow"/>
         <q-space/>
         <q-btn color="primary" dense label="הוסף שורה" @click="addRow"/>
       </template>
     </q-table>
-    <div class="row">
-    <q-btn
-      class="q-ma-md"
-      color="primary"
-      @click="saveOvertimeSettings">
-      שמור שינויים
-    </q-btn>
-    <q-btn
-      class="q-ma-md"
-      text-color="primary"
-      flat
-      @click="resetSettings">
-      בטל שינויים
-    </q-btn>
+    <div class="row justify-around">
+      <q-btn
+        class="q-ma-md "
+        color="primary"
+        @click="saveOvertimeSettings">
+        שמור שינויים
+      </q-btn>
+      <q-btn
+        class="q-ma-md "
+        text-color="primary"
+        flat
+        @click="resetSettings">
+        בטל שינויים
+      </q-btn>
     </div>
     <q-btn
       class="q-ma-lg"
@@ -100,7 +100,7 @@
       @click="signOut">
       התנתק
     </q-btn>
-    <p class="text-body1">*לחיצה בתא לעריכה</p>
+    <p class="text-body2">*לחץ בתא לעריכה</p>
 
   </div>
 </template>
@@ -123,7 +123,7 @@ export default {
         type: '',
         hoursSum: 0,
         percentage: 0
-      },{
+      }, {
         type: '',
         hoursSum: 0,
         percentage: 0
@@ -143,12 +143,10 @@ export default {
   },
   computed: mapState('shifts', ['shifts', 'userInfo']),
   created() {
-    if(this.userInfo.wage === "") {
       setTimeout(() => {
         this.resetSettings();
         this.wage = this.userInfo.wage
-      },1200)
-    } else this.resetSettings();
+      }, 1200)
   },
   methods: {
     translate(val) {
@@ -161,8 +159,8 @@ export default {
           return 'אין תרגום'
       }
     },
-    currRate(percentage){
-      return this.userInfo.wage * percentage/100
+    currRate(percentage) {
+      return this.userInfo.wage * percentage / 100
     },
     signOut() {
       //todo: reset state
@@ -192,15 +190,15 @@ export default {
     removeLastRow() {
       this.data.pop();
     },
-    resetSettings(){
+    resetSettings() {
       this.baseRate = this.userInfo.overtimeSettings[0];
       this.data = [...this.userInfo.overtimeSettings.slice(1)];
     },
-    saveOvertimeSettings(){
-      const overtime = [this.baseRate,...this.data]
+    saveOvertimeSettings() {
+      const overtime = [this.baseRate, ...this.data]
       this.setOvertime(overtime);
     },
-    ...mapActions('shifts', ['setWage','setOvertime','resetState'])
+    ...mapActions('shifts', ['setWage', 'setOvertime', 'resetState'])
   }
 }
 </script>

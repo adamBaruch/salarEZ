@@ -1,19 +1,17 @@
 <template>
   <q-page>
-    <div class="constrain">
+    <div class="constrain q-pa-sm">
       <q-btn-toggle
         v-model="secondModel"
         spread
-        class="my-custom-toggle q-ma-sm"
+        class="my-custom-toggle"
         rounded
-        unelevated
         toggle-color="primary"
         color="white"
         text-color="primary"
         :options="this.options"
       />
     </div>
-
       <clock v-if="secondModel" id="clock"/>
       <Form v-else/>
   </q-page>

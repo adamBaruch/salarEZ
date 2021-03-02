@@ -23,7 +23,7 @@ const routes = [
       }, {
         path: 'update/:id',
         name: 'Update',
-        component: () => import('pages/Update.vue'),
+        component: () => import('pages/UpdateShift.vue'),
         meta: {authNotRequired: false},
       },
       {
@@ -35,7 +35,7 @@ const routes = [
       {
         path: 'my_shifts',
         name: 'my_shifts',
-        component: () => import('pages/DataTable.vue'),
+        component: () => import('pages/ShiftsPage.vue'),
         meta: {authNotRequired: false},
       },
       {

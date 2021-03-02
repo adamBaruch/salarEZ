@@ -31,7 +31,6 @@ function digitizeSingle(time) {
 // }
 
 function paydayCalc(overtimeSettings, hours, wage) {
-  debugger
   let sum = 0;
   for (const wave of overtimeSettings) {
     if (hours > 0) {
