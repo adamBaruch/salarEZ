@@ -16,8 +16,8 @@
         <q-icon name="settings"/>
         <div class="q-mt-md text-center">
           <h3>הגדרות חשובות</h3>
-          <q-input type="number" hint="שכר שעתי" v-model="wage"></q-input>
-          <q-btn flat outline :disable="wage===''" @click="forward"> שמור </q-btn>
+          <q-input type="number" hint="שכר שעתי" v-model="newUserInfo.wage"></q-input>
+          <q-btn flat outline :disable="newUserInfo.wage===''" @click="forward"> שמור </q-btn>
         </div>
       </q-carousel-slide>
       <q-carousel-slide name="דגכ" class="column no-wrap flex-center">
@@ -31,23 +31,33 @@
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapState} from "vuex";
 import utils from "../middleware/utill"
 export default {
-  name: "SettingsCarousel",
+  name: "InitSettings",
   data() {
     return {
+      newUserInfo:{
+        name: '',
+        wage: '',
+        profileImg:'https://cdn3.iconfinder.com/data/icons/mixed-communication-and-ui-pack-1/48/general_pack_NEW_glyph_profile-512.png',
+        overtimeSettings: utils.defaultOvertimeSettings
+      },
       slide: 'style',
-      wage: ''
     }
+  },
+  created() {
+    this.newUserInfo.name = this.userInfo.name
+  },
+  computed: {
+    ...mapState('shifts', ['userInfo'])
   },
   methods: {
     forward() {
-      this.setWage(this.wage);
-      this.setOvertime(utils.defaultOvertimeSettings)
+      this.setUserInfo(this.newUserInfo)
       this.$router.push('/').catch(() => {})
     },
-    ...mapActions('shifts', ['setWage','setOvertime'])
+    ...mapActions('shifts', ['setUserInfo'])
   }
 }
 </script>

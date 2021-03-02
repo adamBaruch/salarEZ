@@ -120,7 +120,5 @@ export default {
   digitizeSingle,
   makeShiftFromClock,
   makeShiftFromForm,
-  paydayCalc,
-  calcDuration,
   defaultOvertimeSettings
 }

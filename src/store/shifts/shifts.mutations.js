@@ -61,10 +61,6 @@ export default {
     state.totalHours = totalHours;
   }),
 
-  setWage: ((state, wage) => {
-    state.userInfo.wage = wage;
-  }),
-
   isDisabled: ((state, bool) => {
     state.buttonDisabled = bool;
   }),

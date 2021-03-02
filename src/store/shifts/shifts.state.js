@@ -14,9 +14,11 @@ export default {
     durationTimeFormat: '',
   },
   userInfo: {
+    name: '',
     overtimeSettings: [],
     startTime: null,
-    wage: ''
+    wage: '',
+    profileImg: ''
   },
   buttonDisabled: false,
   income: 0,

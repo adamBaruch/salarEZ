@@ -12,7 +12,7 @@
           label="הכנס שם"
           style="width: 350px"
           v-model.trim="user.name"
-          lazy-rules
+          :lazy-rules="true"
           :rules="[ val => !!val || 'אנא בחר שם',
                         () => $v.user.name.minLength || 'השם קצר מידי']"
         />
@@ -23,7 +23,7 @@
           label="הכנס אימייל"
           type="email"
           @input="$v.user.email.$touch"
-          lazy-rules
+          :lazy-rules="true"
           :rules="[ val => !!val || 'אנא הכנס אימייל',
                         () => $v.user.email.email || 'אימייל לא תקין']">
 
@@ -38,10 +38,10 @@
           label="הכנס סיסמא"
           :type="isPwd ? 'password' : 'text'"
           @input="$v.user.password.$touch"
-          lazy-rules
+          :lazy-rules="true"
           :rules="[ val => !!val || 'אנא הכנס סיסמא',
-                        val => $v.user.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
-                        val => $v.user.password.minLength || 'סיסמא קצרה מידי']">
+                        () => $v.user.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
+                        () => $v.user.password.minLength || 'סיסמא קצרה מידי']">
           <template v-slot:append>
             <q-icon
               :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import {firebaseAuth} from 'boot/firebase';
 import {email, minLength, alphaNum} from 'vuelidate/lib/validators'
+import {mapActions,mapMutations} from "vuex";
 
 export default {
   name: "SignUp",
@@ -84,17 +84,18 @@ export default {
   methods: {
     async createUser() {
       try {
-        await firebaseAuth
-          .createUserWithEmailAndPassword(this.user.email, this.user.password)
-        await this.$router.push('/b/settings_init').catch(() => {})
-
+        await this.passwordLogin(this.user)
+        this.setUserInfo({name: this.user.name})
+        this.$router.push('/b/settings_init').catch(() => {})
       } catch (error) {
         console.log('error: ' + error)
       }
     },
     gotoLogin(){
       this.$router.push('/b/login').catch(() => {})
-    }
+    },
+    ...mapActions('shifts',['passwordLogin']),
+    ...mapMutations('shifts',['setUserInfo'])
   },
   validations: {
     user: {
@@ -111,9 +112,4 @@ export default {
     }
   }
 }
-//tasks:
-//css?
-//sidebar
-//functions
-//expand slot
 </script>

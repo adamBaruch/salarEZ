@@ -47,9 +47,14 @@ function getUserInfo() {
     })
 }
 
-function setUserInfo(prop, value) {
-  const ref = fireRefs.userInfoRef(window.userId)
-  firebaseDb.ref(ref + prop).set(value);
+function setUserInfo(userInfo){
+  const ref = fireRefs.userInfoRef(window.userId);
+  firebaseDb.ref(ref).update(userInfo)
+}
+
+function changeProfilePic(img) {
+  const ref = fireRefs.profilePicRef(window.userId);
+  return firebaseStorage.ref(ref).put(img)
 }
 
 export default {
@@ -59,6 +64,7 @@ export default {
   updateData,
   uploadPhoto,
   getUserInfo,
-  setUserInfo,
-  getShiftByYear
+  getShiftByYear,
+  changeProfilePic,
+  setUserInfo
 }

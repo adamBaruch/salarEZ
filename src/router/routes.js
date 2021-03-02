@@ -66,7 +66,7 @@ const routes = [
       {
         path: 'settings_init',
         name: 'SettingsInit',
-        component: () => import('pages/SettingsInit'),
+        component: () => import('pages/InitSettings'),
         meta: {authNotRequired: false},
       }
     ]

@@ -1,6 +1,11 @@
 import firebaseApi from '../../middleware/firebaseApi'
+import {firebaseAuth} from "boot/firebase";
 
 export default {
+
+  passwordLogin: async({commit},data) =>{
+    return firebaseAuth.createUserWithEmailAndPassword(data.email,data.password);
+  },
 
   getShifts: async ({commit}, {year, month}) => {
     const shifts = await firebaseApi.getShiftsByMonth(year, month);
@@ -63,9 +68,14 @@ export default {
     commit('setUserInfo', userInfo);
   },
 
+  setUserInfo: ({commit},userInfo) =>{
+    firebaseApi.setUserInfo(userInfo);
+    commit('setUserInfo',userInfo)
+  },
+
   setWage: async ({commit}, wage) => {
     await firebaseApi.setUserInfo('wage', wage);
-    commit('setWage', wage);
+    commit('setUserInfo', {wage:wage});
   },
 
   handleButtonClick: ({state, commit}, func) => {
@@ -91,5 +101,11 @@ export default {
     commit('resetShifts');
     commit('resetUserInfo');
     commit('resetOthers');
-  }
+  },
+
+  savePic: async({dispatch},img)=>{
+      const storageUrl = await firebaseApi.changeProfilePic(img);
+      const result = await storageUrl.ref.getDownloadURL()
+      dispatch('setUserInfo',{profileImg: result})
+  },
 }

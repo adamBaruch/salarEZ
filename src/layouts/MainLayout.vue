@@ -25,13 +25,16 @@
     >
       <q-list>
         <q-item
-          header
           class="text-grey-8"
         >
-          <q-avatar
-            :img="require('src/assets/salarEZ_logo.png')"
-          />
-          username something else
+          <q-item-section>
+            <q-avatar class="avatar" @click="changePic">
+              <q-img :src="userInfo.profileImg"/>
+            </q-avatar>
+          </q-item-section>
+          <q-item-section side top>
+            <q-item-label >{{ userInfo.name }}</q-item-label>
+          </q-item-section>
         </q-item>
         <EssentialLink
           v-for="link in essentialLinks"
@@ -66,16 +69,18 @@
                       :key="btn.icon"
                       :color="btn.color"
                       :icon="btn.icon"
-                      @click="goTo(btn.link)"/>
-
+                      @click="goTo(btn.link)"
+        />
       </q-fab>
     </q-page-sticky>
+    <q-file v-model="pic" ref="file" style="display: none" @input="savePic($event)"/>
+
   </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
-import {firebaseAuth} from "boot/firebase";
+import {mapActions, mapState} from "vuex";
 
 const fabs = [
   {
@@ -104,12 +109,12 @@ const linksData = [
     icon: 'info',
     link: '/about'
   },
-  {
-    title: 'תלוש',
-    caption: '',
-    icon: 'fas fa-image',
-    link: '/upload'
-  },
+  // {
+  //   title: 'תלוש',
+  //   caption: '',
+  //   icon: 'fas fa-image',
+  //   link: '/upload'
+  // },
   {
     title: 'משמרות',
     caption: '',
@@ -133,28 +138,36 @@ export default {
       fabs: fabs,
       essentialLinks: linksData,
       fabPos: [window.innerWidth-60, 18],
-      draggingFab: false
+      draggingFab: false,
+      pic: null,
     }
   },
+  computed:{
+    ...mapState('shifts',['userInfo'])
+  },
   methods: {
-
     goTo(route) {
       this.$router.push(route).catch(() => {
       });
     },
     moveFab(ev) {
       this.draggingFab = ev.isFirst !== true && ev.isFinal !== true
-
       this.fabPos = [
         this.fabPos[0] + ev.delta.x,
         this.fabPos[1] - ev.delta.y
       ]
-    }
+    },
+    changePic(){
+      this.$refs.file.pickFiles()
+    },
+    ...mapActions('shifts',['savePic'])
   }
 }
 </script>
 
 <style scoped>
-
+.avatar{
+  font-size: 80px;
+}
 
 </style>

@@ -4,7 +4,8 @@ export default {
   singleShiftRef,
   shiftByDateRef,
   photoRef,
-  userInfoRef
+  userInfoRef,
+  profilePicRef
 }
 
 function shiftsRef(userId,year,month){
@@ -31,4 +32,8 @@ function photoRef(userId, photoName){
 
 function userInfoRef(userId){
   return 'users/' + userId + '/userInfo/'
+}
+
+function profilePicRef(userId){
+  return 'users/' + userId + '/profilePic'
 }
