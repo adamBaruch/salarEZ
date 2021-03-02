@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex';
+import {mapActions} from 'vuex';
 import {firebaseAuth} from "boot/firebase";
 import OvertimeSettings from "components/Settings/OvertimeSettings";
 import WageSettings from "components/Settings/WageSettings";

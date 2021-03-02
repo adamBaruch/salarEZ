@@ -11,19 +11,19 @@
         <q-td key="type">
           {{ translate(baseRate.type) }}
         </q-td>
-        <q-td key="hoursSum" align="center">
+        <q-td key="hoursSum" class="centered">
           {{ baseRate.hoursSum }}
           <q-popup-edit v-model="baseRate.hoursSum" buttons>
             <q-input type="number" v-model="baseRate.hoursSum" dense autofocus counter/>
           </q-popup-edit>
         </q-td>
-        <q-td key="percentage" align="center">
+        <q-td key="percentage" class="centered">
           {{ baseRate.percentage }}
           <q-popup-edit v-model="baseRate.percentage" buttons>
             <q-input type="number" v-model="baseRate.percentage" dense autofocus counter/>
           </q-popup-edit>
         </q-td>
-        <q-td align="center">
+        <q-td class="centered">
           {{ userInfo.wage }}
         </q-td>
       </template>
@@ -157,5 +157,8 @@ export default {
 </script>
 
 <style scoped>
+.centered{
+  text-align: center
+}
 
 </style>
