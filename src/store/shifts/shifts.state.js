@@ -1,4 +1,5 @@
 export default {
+  title: 'salarEZ',
   shifts: {},
   editedShift: {
     day: '',

@@ -1,21 +1,34 @@
 import firebaseApi from '../../middleware/firebaseApi'
-import {firebaseAuth} from "boot/firebase";
+import firebase, {firebaseAuth} from "boot/firebase";
+const provider = new firebase.firebase.auth.GoogleAuthProvider();
 
 export default {
 
-  passwordLogin: async({commit},data) =>{
-    return firebaseAuth.createUserWithEmailAndPassword(data.email,data.password);
+  passwordRegister: async ({commit}, data) => {
+    return firebaseAuth.createUserWithEmailAndPassword(data.email, data.password);
+  },
+
+  passwordLogin: ({}, {email, password}) => {
+    return firebaseAuth.signInWithEmailAndPassword(email, password);
+  },
+
+  googleLogin: async ({}) => {
+    const res = await firebaseAuth.signInWithPopup(provider);
+    if (res.additionalUserInfo.isNewUser)
+      return '/b/settings_init'
+    else
+      return '/'
   },
 
   getShifts: async ({commit}, {year, month}) => {
     const shifts = await firebaseApi.getShiftsByMonth(year, month);
-    let stateShifts = {[year]: {[month]:[]}}
+    let stateShifts = {[year]: {[month]: []}}
     let income = 0;
     let time = 0;
     for (const day in shifts) {
       if (shifts.hasOwnProperty(day))
         for (const key in shifts[day]) {
-          if (shifts[day].hasOwnProperty(key)){
+          if (shifts[day].hasOwnProperty(key)) {
             let shift = shifts[day][key];
             shift.id = key;
             income += shift.payday;
@@ -58,24 +71,24 @@ export default {
     commit('setEditedShift', shift);
   },
 
-  saveStartTime: async ({commit, state}, time)=> {
-    await firebaseApi.setUserInfo('startTime', time);
+  saveStartTime: async ({commit, state}, time) => {
+    await firebaseApi.setUserInfo({startTime: time});
     commit('setStartTime', time);
   },
 
-  getUserInfo: async ({commit}) =>{
+  getUserInfo: async ({commit}) => {
     const userInfo = await firebaseApi.getUserInfo();
     commit('setUserInfo', userInfo);
   },
 
-  setUserInfo: ({commit},userInfo) =>{
+  setUserInfo: ({commit}, userInfo) => {
     firebaseApi.setUserInfo(userInfo);
-    commit('setUserInfo',userInfo)
+    commit('setUserInfo', userInfo)
   },
 
   setWage: async ({commit}, wage) => {
-    await firebaseApi.setUserInfo('wage', wage);
-    commit('setUserInfo', {wage:wage});
+    await firebaseApi.setUserInfo({wage: wage});
+    commit('setUserInfo', {wage: wage});
   },
 
   handleButtonClick: ({state, commit}, func) => {
@@ -91,21 +104,26 @@ export default {
     await firebaseApi.getShifts(year, month);
   },
 
-  setOvertime: ({commit},overtimeSettings) =>{
-    commit('setOvertime',overtimeSettings);
-    firebaseApi.setUserInfo('overtimeSettings', overtimeSettings);
+  setOvertime: ({commit}, overtimeSettings) => {
+    commit('setOvertime', overtimeSettings);
+    firebaseApi.setUserInfo({overtimeSettings: overtimeSettings});
   },
 
-  resetState: ({commit}) =>{
+  resetState: ({commit}) => {
     commit('resetEditedShift');
     commit('resetShifts');
     commit('resetUserInfo');
     commit('resetOthers');
   },
 
-  savePic: async({dispatch},img)=>{
-      const storageUrl = await firebaseApi.changeProfilePic(img);
-      const result = await storageUrl.ref.getDownloadURL()
-      dispatch('setUserInfo',{profileImg: result})
+  savePic: async ({dispatch}, img) => {
+    const storageUrl = await firebaseApi.changeProfilePic(img);
+    const result = await storageUrl.ref.getDownloadURL()
+    dispatch('setUserInfo', {profileImg: result})
   },
+
+  setTitle: ({commit},title)=>{
+    commit('setTitle',title)
+  }
 }
+

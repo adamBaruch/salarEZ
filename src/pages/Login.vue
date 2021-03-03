@@ -11,10 +11,10 @@
                  label="הכנס אימייל"
                  type="email"
                  style="width: 350px"
-                 @input="$v.tempUser.email.$touch"
-                 lazy-rules
+                 @input="this.$v.tempUser.email.$touch"
+                 :lazy-rules="true"
                  :rules="[ val => !!val || 'כתובת אימייל',
-                        () => $v.tempUser.email.email || 'אימייל לא חוקי']">
+                        () => this.$v.tempUser.email.email || 'אימייל לא חוקי']">
           <template v-slot:append>
             <q-icon name="mail"/>
           </template>
@@ -24,17 +24,17 @@
                  standout="text-grey-5"
                  label="הכנס סיסמא"
                  :type="isPwd ? 'password' : 'text'"
-                 @input="$v.tempUser.password.$touch"
-                 lazy-rules
+                 @input="this.$v.tempUser.password.$touch"
+                 :lazy-rules="true"
                  :rules="[ val => !!val || 'אנא הכנס סיסמא',
-                        () => $v.tempUser.password.alphaNum || 'ניתן להשתמש רק באותיות ומספרים',
-                        () => $v.tempUser.password.minLength || 'הסיסמא קצרה מידי',]">
+                        () => this.$v.tempUser.password.alphaNum || 'ניתן להשתמש רק באותיות ומספרים',
+                        () => this.$v.tempUser.password.minLength || 'הסיסמא קצרה מידי',]">
 
           <template v-slot:append>
             <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd"/>
           </template>
         </q-input>
-        <q-btn no-caps rounded color="blue" icon-right="login" label="התחבר" @onclick="passwordLogin"
+        <q-btn no-caps rounded color="blue" :disable="this.$v.$invalid" icon-right="login" label="התחבר" @click="passwordSignIn"
                class="q-mb-sm q-py-xs"/>
         <q-separator size="1px" color="dark" inset="true" class="q-my-sm"/>
         <q-btn rounded
@@ -43,7 +43,8 @@
                icon-right="fab fa-google"
                label="google"
                class="q-mt-sm q-py-xs"
-               @click="googleRegister"/>
+               @click="googleRegister"
+        />
         <div class="flex flex-center q-ma-lg">
           <q-btn flat dense @click="goToSignUp">הרשמה</q-btn>
         </div>
@@ -53,11 +54,8 @@
 </template>
 
 <script>
-import {firebaseAuth } from 'boot/firebase';
-import firebase from "boot/firebase";
-import {email, alphaNum, minLength} from 'vuelidate/lib/validators'
-
-const provider = new firebase.firebase.auth.GoogleAuthProvider();
+import {email, alphaNum, minLength,required} from 'vuelidate/lib/validators'
+import {mapActions} from "vuex";
 
 export default {
   name: "login",
@@ -71,32 +69,31 @@ export default {
     }
   },
   methods: {
-    googleRegister() {
-      firebaseAuth.signInWithPopup(provider).then((res) => {
-        if (res.additionalUserInfo.isNewUser)
-          this.$router.push('/b/settings_init').catch(() => {})
-        else
-          this.$router.push('/').catch(() => {})
-      }).catch(function (error) {
-
-      });
+    async googleRegister() {
+      const res = await this.googleLogin()
+      await this.$router.push(res)
     },
-    passwordLogin() {
-      firebaseAuth.signInWithEmailAndPassword(this.user.email, this.user.password)
-        .then(() => {
-          this.$router.push('/').catch(() => {})
-        })
+    async passwordSignIn() {
+      try {
+        await this.passwordLogin(this.tempUser);
+        await this.$router.push('/')
+      } catch (err) {
+        console.log(err)
+      }
     },
     goToSignUp() {
-      this.$router.push('/b/signup').catch(() => {});
-    }
+      this.$router.push('/b/signup')
+    },
+    ...mapActions('shifts', ['passwordLogin', 'googleLogin'])
   },
   validations: {
     tempUser: {
       email: {
+        required,
         email
       },
       password: {
+        required,
         alphaNum,
         minLength: minLength(6)
       },
@@ -106,10 +103,4 @@ export default {
 </script>
 
 <style scoped>
-.form {
-  direction: rtl;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 </style>

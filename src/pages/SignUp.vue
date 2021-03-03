@@ -14,7 +14,7 @@
           v-model.trim="user.name"
           :lazy-rules="true"
           :rules="[ val => !!val || 'אנא בחר שם',
-                        () => $v.user.name.minLength || 'השם קצר מידי']"
+                        () => this.$v.user.name.minLength || 'השם קצר מידי']"
         />
         <q-input
           outlined
@@ -22,10 +22,10 @@
           v-model="user.email"
           label="הכנס אימייל"
           type="email"
-          @input="$v.user.email.$touch"
+          @input="this.$v.user.email.$touch"
           :lazy-rules="true"
           :rules="[ val => !!val || 'אנא הכנס אימייל',
-                        () => $v.user.email.email || 'אימייל לא תקין']">
+                        () => this.$v.user.email.email || 'אימייל לא תקין']">
 
           <template v-slot:append>
             <q-icon name="mail"/>
@@ -37,11 +37,11 @@
           v-model="user.password"
           label="הכנס סיסמא"
           :type="isPwd ? 'password' : 'text'"
-          @input="$v.user.password.$touch"
+          @input="this.$v.user.password.$touch"
           :lazy-rules="true"
           :rules="[ val => !!val || 'אנא הכנס סיסמא',
-                        () => $v.user.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
-                        () => $v.user.password.minLength || 'סיסמא קצרה מידי']">
+                        () => this.$v.user.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
+                        () => this.$v.user.password.minLength || 'סיסמא קצרה מידי']">
           <template v-slot:append>
             <q-icon
               :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -55,6 +55,7 @@
           class="q-mb-sm q-py-xs"
           color="blue"
           icon-right="login"
+          :disable="this.$v.$invalid"
           @click="createUser()"
           label="הרשמה"/>
       </q-form>
@@ -66,7 +67,7 @@
 </template>
 
 <script>
-import {email, minLength, alphaNum} from 'vuelidate/lib/validators'
+import {email, minLength, alphaNum, required} from 'vuelidate/lib/validators'
 import {mapActions,mapMutations} from "vuex";
 
 export default {
@@ -84,7 +85,7 @@ export default {
   methods: {
     async createUser() {
       try {
-        await this.passwordLogin(this.user)
+        await this.passwordRegister(this.user)
         this.setUserInfo({name: this.user.name})
         this.$router.push('/b/settings_init').catch(() => {})
       } catch (error) {
@@ -94,18 +95,21 @@ export default {
     gotoLogin(){
       this.$router.push('/b/login').catch(() => {})
     },
-    ...mapActions('shifts',['passwordLogin']),
+    ...mapActions('shifts',['passwordRegister']),
     ...mapMutations('shifts',['setUserInfo'])
   },
   validations: {
     user: {
       email: {
+        required,
         email
       },
       name: {
+        required,
         minLength: minLength(2)
       },
       password: {
+        required,
         alphaNum,
         minLength: minLength(6)
       },

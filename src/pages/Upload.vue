@@ -43,6 +43,7 @@ export default {
       progress: 0
     }
   },
+
   methods: {
     upload(){
       firebaseApi.uploadPhoto(this.photo,(prog)=>{

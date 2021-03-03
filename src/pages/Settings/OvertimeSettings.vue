@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <q-page class="constrain2">
     <q-table
       class="q-ma-xs"
       title="הגדרת שעות"
@@ -74,7 +74,7 @@
       <p class="text-body2">*לחץ בתא לעריכה</p>
       <q-space/>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <script>
@@ -112,6 +112,7 @@ export default {
     }
   },
   created() {
+    this.setTitle('הגדרות')
     setTimeout(() => {
       this.resetSettings();
     }, 1200)
@@ -151,7 +152,7 @@ export default {
       const overtime = [this.baseRate, ...this.data]
       this.setOvertime(overtime);
     },
-    ...mapActions('shifts', ['setOvertime'])
+    ...mapActions('shifts', ['setOvertime','setTitle'])
   }
 }
 </script>

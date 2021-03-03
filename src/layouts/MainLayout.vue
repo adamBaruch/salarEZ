@@ -11,7 +11,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
         <q-toolbar-title>
-          salarEZ
+          {{ title }}
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -28,14 +28,15 @@
           class="text-grey-8"
         >
           <q-item-section>
-            <q-avatar class="avatar" @click="changePic">
+            <q-avatar size="70px">
               <q-img :src="userInfo.profileImg"/>
             </q-avatar>
           </q-item-section>
-          <q-item-section side top>
-            <q-item-label >{{ userInfo.name }}</q-item-label>
+          <q-item-section class="relative-position">
+            <q-item-label class="absolute-bottom">{{ userInfo.name }}</q-item-label>
           </q-item-section>
         </q-item>
+        <q-separator :inset="true" class="q-my-sm"/>
         <EssentialLink
           v-for="link in essentialLinks"
           :key="link.title"
@@ -73,14 +74,12 @@
         />
       </q-fab>
     </q-page-sticky>
-    <q-file v-model="pic" ref="file" style="display: none" @input="savePic($event)"/>
-
   </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
-import {mapActions, mapState} from "vuex";
+import {mapState} from "vuex";
 
 const fabs = [
   {
@@ -139,11 +138,10 @@ export default {
       essentialLinks: linksData,
       fabPos: [window.innerWidth-60, 18],
       draggingFab: false,
-      pic: null,
     }
   },
   computed:{
-    ...mapState('shifts',['userInfo'])
+    ...mapState('shifts',['userInfo','title'])
   },
   methods: {
     goTo(route) {
@@ -157,17 +155,9 @@ export default {
         this.fabPos[1] - ev.delta.y
       ]
     },
-    changePic(){
-      this.$refs.file.pickFiles()
-    },
-    ...mapActions('shifts',['savePic'])
   }
 }
 </script>
 
 <style scoped>
-.avatar{
-  font-size: 80px;
-}
-
 </style>

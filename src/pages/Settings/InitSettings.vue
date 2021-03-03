@@ -32,7 +32,7 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
-import utils from "../middleware/utill"
+import utils from "../../middleware/utill"
 export default {
   name: "InitSettings",
   data() {

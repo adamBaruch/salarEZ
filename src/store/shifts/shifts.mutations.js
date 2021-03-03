@@ -2,6 +2,10 @@ const merge = require('lodash/merge');
 
 export default {
 
+  setTitle: ((state,title)=>{
+    state.title = title
+  }),
+
   setShifts: ((state, shifts) => {
     state.shifts = merge(shifts, state.shifts);
   }),
@@ -75,7 +79,9 @@ export default {
     state.userInfo = {
       overtimeSettings: [],
       startTime: null,
-      wage: ''
+      wage: '',
+      name: '',
+      profileImg:''
     }
   }),
   resetOthers: ((state) => {

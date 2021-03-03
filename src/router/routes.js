@@ -20,7 +20,8 @@ const routes = [
         name: 'About',
         component: () => import('pages/About.vue'),
         meta: {authNotRequired: false},
-      }, {
+      },
+      {
         path: 'update/:id',
         name: 'Update',
         component: () => import('pages/UpdateShift.vue'),
@@ -29,7 +30,19 @@ const routes = [
       {
         path: 'settings',
         name: 'Settings',
-        component: () => import('pages/Settings.vue'),
+        component: () => import('pages/Settings/SettingsMain.vue'),
+        meta: {authNotRequired: false},
+      },
+      {
+        path: 'wage_settings',
+        name: 'WageSettings',
+        component: () => import('pages/Settings/WageSettings.vue'),
+        meta: {authNotRequired: false},
+      },
+      {
+        path: 'overtime_settings',
+        name: 'OvertimeSettings',
+        component: () => import('pages/Settings/OvertimeSettings.vue'),
         meta: {authNotRequired: false},
       },
       {
@@ -66,7 +79,7 @@ const routes = [
       {
         path: 'settings_init',
         name: 'SettingsInit',
-        component: () => import('pages/InitSettings'),
+        component: () => import('pages/Settings/InitSettings'),
         meta: {authNotRequired: false},
       }
     ]

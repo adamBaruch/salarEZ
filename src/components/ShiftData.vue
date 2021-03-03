@@ -1,6 +1,5 @@
 <template>
   <q-form @submit="onSubmit" @reset="resetForm" class="q-gutter-md constrain column">
-   <span>{{ item.id ? 'עריכה' : 'הוספה'}}</span>
     <q-input
       filled
       :readonly="$route.params.id !== undefined"
@@ -40,7 +39,7 @@ import {mapState, mapActions} from 'vuex';
 import utills from "../middleware/utill";
 
 export default {
-  name: "Form",
+  name: "ShiftData",
   data() {
     return {
       item: {

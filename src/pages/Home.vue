@@ -21,7 +21,7 @@
 <script>
 import ShiftData from "components/ShiftData";
 import Clock from "../components/Clock";
-import {mapActions, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 
 
 export default {
@@ -37,8 +37,13 @@ export default {
       ]
     }
   },
+  created() {
+    this.setTitle('salarEZ')
+  },
   computed: mapState('shifts', ['shifts']),
-  methods: {...mapActions('shifts', ['getShifts'])}
+  methods: {...mapActions('shifts', ['getShifts']),
+    ...mapMutations('shifts',['setTitle'])
+  }
 }
 </script>
 

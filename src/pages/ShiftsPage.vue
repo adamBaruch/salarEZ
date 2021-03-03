@@ -12,14 +12,19 @@
 
 <script>
 import ShiftsTable from "components/ShiftsTable";
+import {mapActions} from "vuex";
 
 export default {
   name: "my_shifts",
   components: {ShiftsTable},
+  created() {
+    this.setTitle('משמרות')
+  },
   methods: {
     goBack() {
       this.$router.back()
-    }
+    },
+    ...mapActions('shifts',['setTitle'])
   }
 }
 </script>
