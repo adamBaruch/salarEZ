@@ -5,7 +5,8 @@
            class="q-pa-xs"
            color="secondary"
            icon="fas fa-arrow-right"
-           @click="goBack"/>
+           @click="goBack"
+    />
     <ShiftsTable/>
   </q-page>
 </template>

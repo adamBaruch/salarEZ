@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-sm" style="max-width: 800px">
+  <div class="q-pa-sm constrain" style="max-width: 800px">
     <q-markup-table v-if="!finishedLoading">
       <thead>
       <tr>
