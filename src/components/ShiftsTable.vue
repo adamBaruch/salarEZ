@@ -1,5 +1,39 @@
 <template>
   <div class="q-pa-sm constrain" style="max-width: 800px">
+    <div
+      class="row q-mb-md q-px-sm q-gutter-md"
+    >
+      <div class="col-2 row items-center">
+        <div style="font-size: 18px;">
+          מיון:
+        </div>
+      </div>
+      <q-select
+        dense
+        options-dense
+        v-model="yearFilter"
+        label="שנה"
+        :options="yearOptions"
+        style="width: 80px"
+        behavior="menu"
+      />
+      <q-select
+        dense
+        options-dense
+        v-model="monthFilter"
+        label="חודש"
+        :options="monthOptions"
+        style="width: 80px"
+        behavior="menu"
+      />
+      <q-btn
+        text-color="primary"
+        flat
+        @click="filter()"
+      >
+        מיין
+      </q-btn>
+    </div>
     <q-markup-table v-if="!finishedLoading">
       <thead>
       <tr>
@@ -47,39 +81,6 @@
       </tr>
       </tbody>
     </q-markup-table>
-    <div
-      class="row q-mb-md q-px-sm q-gutter-md"
-      v-if="data.length!==0"
-    >
-      <span class="col-1 content-center"><q-space/><b> מיון: </b><q-space/></span>
-      <q-select
-        dense
-        options-dense
-        v-if="data.length!==0"
-        v-model="yearFilter"
-        label="שנה"
-        :options="yearOptions"
-        style="width: 80px"
-        behavior="menu"
-      />
-      <q-select
-        v-if="data.length!==0"
-        dense
-        options-dense
-        v-model="monthFilter"
-        label="חודש"
-        :options="monthOptions"
-        style="width: 80px"
-        behavior="menu"
-      />
-      <q-btn
-        text-color="primary"
-        flat
-        @click="filter()"
-      >
-        מיין
-      </q-btn>
-    </div>
     <q-table
       v-if="data.length!==0"
       title="משמרות"
@@ -95,16 +96,6 @@
       binary-state-sort
       bottom-row="no-data"
     >
-      <template v-slot:bottom-row>
-        <q-tr align="center">
-          <q-td><span></span></q-td>
-          <q-td><span></span></q-td>
-          <q-td><span></span></q-td>
-          <q-td><span></span></q-td>
-          <q-td><b>{{ totalHours.toFixed(2) }}</b></q-td>
-          <q-td><b>{{ income.toFixed(2) }}</b></q-td>
-        </q-tr>
-      </template>
       <template v-slot:header="props">
         <q-tr :props="props">
           <q-th
@@ -136,7 +127,7 @@
                    color="grey"
                    icon="edit"
                    class="q-ma-xs"
-                   @click="updateRow(props.row)" />
+                   @click="updateRow(props.row)"/>
           </q-td>
           <q-td key="date" :props="props">
             {{ props.row.dateFormat }}
@@ -171,6 +162,16 @@
               icon="edit"
               @click="updateRow(props.row)"/>
           </q-td>
+        </q-tr>
+      </template>
+      <template v-slot:bottom-row>
+        <q-tr class="centered">
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><span></span></q-td>
+          <q-td><b>{{ totalHours.toFixed(2) }}</b></q-td>
+          <q-td><b>{{  '\u20aa ' + income.toFixed(2) }}</b></q-td>
         </q-tr>
       </template>
     </q-table>
@@ -238,11 +239,11 @@ export default {
     'totalHours'
   ]),
   async created() {
-    if (this.shifts.length !== 0){
+    if (this.shifts.length !== 0) {
       const today = new Date();
       const year = today.getFullYear();
-      const month = today.getMonth()+1;
-      await this.setDataTable({year,month});
+      const month = today.getMonth() + 1;
+      await this.setDataTable({year, month});
     }
     this.finishedLoading = true;
   },
@@ -259,15 +260,15 @@ export default {
       this.$router.push('/update/' + row.id).catch(() => {
       });
     },
-    async setDataTable({year,month}){
-      await this.getShifts({year,month})
+    async setDataTable({year, month}) {
+      await this.getShifts({year, month})
       if (this.shifts.hasOwnProperty(year)) {
         if (this.shifts[year].hasOwnProperty(month)) {
           this.data = this.shifts[year][month]
         }
       }
     },
-    async filter(){
+    async filter() {
       const filter = {
         year: this.yearFilter,
         month: this.monthFilter
@@ -305,6 +306,7 @@ export default {
     position: sticky
     z-index: 1
   /* this will be the loading indicator */
+
 
 
 

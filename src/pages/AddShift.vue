@@ -1,11 +1,12 @@
 <template>
-<ShiftData/>
+  <ShiftData/>
 </template>
 
 <script>
 import ShiftData from "components/ShiftData";
+
 export default {
-name: "AddShift",
+  name: "AddShift",
   components: {ShiftData}
 }
 </script>

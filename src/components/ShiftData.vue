@@ -3,7 +3,7 @@
   <q-form @submit="onSubmit" @reset="resetForm" class="q-gutter-md q-pr-md constrain2 column">
     <div class="row">
       <div class="col-2 row items-center" style="font-size: 18px">
-        תאריך
+        תאריך:
       </div>
       <div class="col">
     <q-input
@@ -11,7 +11,7 @@
       :readonly="$route.params.id !== undefined"
       type="date"
       v-model="item.date"
-      label="תאריך *"
+      label="תאריך "
       stack-label
     />
       </div>
@@ -19,7 +19,7 @@
     <div  class="row">
       <div class="col-2 row items-center">
         <div style="font-size: 18px;">
-          התחלה
+          התחלה:
         </div>
       </div>
       <div class="col">
@@ -32,7 +32,7 @@
     <div class="row">
       <div class=" col-2 row items-center">
         <div style="font-size: 18px;">
-        סיום
+        סיום:
         </div>
       </div>
       <div class="col">

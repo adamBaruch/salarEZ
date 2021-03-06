@@ -1,8 +1,44 @@
 <template>
   <q-page class="constrain2">
+    <q-markup-table v-if="!finishedLoading">
+      <thead>
+      <tr>
+        <th class="text-left" style="width: 150px">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+        <th class="text-right">
+          <q-skeleton animation="blink" type="text"/>
+        </th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr v-for="n in 4" :key="n">
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="35px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="65px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="25px"/>
+        </td>
+        <td class="text-right">
+          <q-skeleton animation="blink" type="text" width="85px"/>
+        </td>
+      </tr>
+      </tbody>
+    </q-markup-table>
     <q-table
       class="q-ma-xs"
       title="הגדרת שעות"
+      v-if="data.length!==0"
       :data="data"
       :columns="columns"
       row-key="id"
@@ -57,23 +93,24 @@
     </q-table>
     <div class="row justify-around">
       <q-btn
+        v-if="finishedLoading"
         class="q-ma-md "
         color="primary"
         @click="saveOvertimeSettings">
         שמור שינויים
       </q-btn>
       <q-btn
-        class="q-ma-md "
+        v-if="finishedLoading"
+        class="q-ma-md"
         text-color="primary"
         flat
         @click="resetSettings">
         בטל שינויים
       </q-btn>
     </div>
-    <div class="row">
-      <p class="text-body2">*לחץ בתא לעריכה</p>
-      <q-space/>
-    </div>
+    <p class="row q-ml-sm text-body2" v-if="finishedLoading">
+      *לחץ בתא לעריכה
+    </p>
   </q-page>
 </template>
 
@@ -89,15 +126,7 @@ export default {
         hoursSum: 0,
         percentage: 0
       },
-      data: [{
-        type: '',
-        hoursSum: 0,
-        percentage: 0
-      }, {
-        type: '',
-        hoursSum: 0,
-        percentage: 0
-      }],
+      data: [],
       columns: [
         {
           name: 'type',
@@ -109,12 +138,14 @@ export default {
         {name: 'percentage', align: 'center', label: 'אחוז (%)', format: (val) => val + '%'},
         {name: 'currWage', align: 'center', label: 'תעריף (\u20aa)', field: 'תעריף'},
       ],
+      finishedLoading: false,
     }
   },
   created() {
     this.setTitle('הגדרות')
     setTimeout(() => {
       this.resetSettings();
+      this.finishedLoading = true;
     }, 1200)
   },
   computed: {
@@ -152,14 +183,11 @@ export default {
       const overtime = [this.baseRate, ...this.data]
       this.setOvertime(overtime);
     },
-    ...mapActions('shifts', ['setOvertime','setTitle'])
+    ...mapActions('shifts', ['setOvertime', 'setTitle'])
   }
 }
 </script>
 
 <style scoped>
-.centered{
-  text-align: center
-}
 
 </style>

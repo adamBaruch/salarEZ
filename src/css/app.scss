@@ -1,38 +1,42 @@
 // app global css in SCSS form
-body{
+body {
   margin: auto 0;
   padding: 0;
 }
-  .constrain {
-    max-width: 800px;
-    margin: 0 auto;
-  }
 
-  .constrain2 {
-    max-width: 500px;
-    margin: 0 auto;
-  }
+.constrain {
+  max-width: 800px;
+  margin: 0 auto;
+}
 
-  .constrain3{
-    max-width: 1250px;
-    margin: 0 auto;
-  }
+.constrain2 {
+  max-width: 500px;
+  margin: 0 auto;
+}
 
-  .small-screen-only {
-    @media (max-width: $breakpoint-xs-max) {
-      display: block;
-    }
-    @media (min-width: $breakpoint-sm-min) {
-      display: none;
-    }
-  }
+.constrain3 {
+  max-width: 1250px;
+  margin: 0 auto;
+}
 
-  .large-screen-only {
-    @media (max-width: $breakpoint-xs-max) {
-      display: none;
-    }
-    @media (min-width: $breakpoint-sm-min) {
-      display: block;
-    }
+.small-screen-only {
+  @media (max-width: $breakpoint-xs-max) {
+    display: block;
   }
+  @media (min-width: $breakpoint-sm-min) {
+    display: none;
+  }
+}
 
+.large-screen-only {
+  @media (max-width: $breakpoint-xs-max) {
+    display: none;
+  }
+  @media (min-width: $breakpoint-sm-min) {
+    display: block;
+  }
+}
+
+.centered {
+  text-align: center
+}

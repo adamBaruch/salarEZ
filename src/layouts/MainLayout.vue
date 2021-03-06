@@ -48,8 +48,7 @@
     <q-page-container>
       <router-view/>
     </q-page-container>
-
-    <q-page-sticky position="bottom-right" :offset="fabPos">
+    <q-page-sticky :offset="fabPos">
       <q-fab
         icon="add"
         label-class="bg-grey-3 text-purple"
@@ -73,6 +72,7 @@
                       @click="goTo(btn.link)"
         />
       </q-fab>
+
     </q-page-sticky>
   </q-layout>
 </template>
