@@ -16,7 +16,7 @@
           </q-btn>
         </q-item-section>
         <q-item-section class="relative-position">
-          <q-item-label class="q-ma-md">{{ userInfo.name }}</q-item-label>
+          <q-item-label class="q-ma-md text-black" >{{ userInfo.name }}</q-item-label>
         </q-item-section>
       </q-item>
       <q-separator :inset="true" class="q-mb-md"/>

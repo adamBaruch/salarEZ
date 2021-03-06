@@ -1,5 +1,12 @@
 <template>
   <q-page class="constrain2">
+    <q-btn dense
+           flat
+           class="q-pa-xs"
+           color="secondary"
+           icon="fas fa-arrow-right"
+           @click="goBack"
+    />
     <q-markup-table v-if="!finishedLoading">
       <thead>
       <tr>
@@ -141,17 +148,21 @@ export default {
       finishedLoading: false,
     }
   },
-  created() {
+  async created() {
     this.setTitle('הגדרות')
-    setTimeout(() => {
-      this.resetSettings();
-      this.finishedLoading = true;
-    }, 1200)
+    if (this.userInfo.wage === '')
+      await this.getUserInfo()
+    this.resetSettings();
+    this.finishedLoading = true;
+
   },
   computed: {
     ...mapState('shifts', ['shifts', 'userInfo'])
   },
   methods: {
+    goBack() {
+      this.$router.back()
+    },
     translate(val) {
       switch (val) {
         case 'baseRate':
@@ -183,7 +194,7 @@ export default {
       const overtime = [this.baseRate, ...this.data]
       this.setOvertime(overtime);
     },
-    ...mapActions('shifts', ['setOvertime', 'setTitle'])
+    ...mapActions('shifts', ['setOvertime', 'setTitle','getUserInfo'])
   }
 }
 </script>

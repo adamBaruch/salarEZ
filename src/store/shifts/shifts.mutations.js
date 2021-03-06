@@ -72,9 +72,11 @@ export default {
   setOvertime: ((state, overtime) => {
     state.userInfo.overtimeSettings = overtime;
   }),
+
   resetShifts: ((state) => {
     state.shifts = [];
   }),
+
   resetUserInfo: ((state) => {
     state.userInfo = {
       overtimeSettings: [],
@@ -84,6 +86,7 @@ export default {
       profileImg:''
     }
   }),
+
   resetOthers: ((state) => {
     state.buttonDisabled = false;
     state.income = 0;

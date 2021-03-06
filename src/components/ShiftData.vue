@@ -6,45 +6,45 @@
         תאריך:
       </div>
       <div class="col">
-    <q-input
-      filled
-      :readonly="$route.params.id !== undefined"
-      type="date"
-      v-model="item.date"
-      label="תאריך "
-      stack-label
-    />
+        <q-input
+          filled
+          :readonly="$route.params.id !== undefined"
+          type="date"
+          v-model="item.date"
+          label="תאריך "
+          stack-label
+        />
       </div>
     </div>
-    <div  class="row">
+    <div class="row">
       <div class="col-2 row items-center">
         <div style="font-size: 18px;">
           התחלה:
         </div>
       </div>
       <div class="col">
-      <q-input filled type="time" v-model="item.startTimeFormat"
-               label="שעה"
-               stack-label>
-      </q-input>
+        <q-input filled type="time" v-model="item.startTimeFormat"
+                 label="שעה"
+                 stack-label>
+        </q-input>
       </div>
     </div>
     <div class="row">
       <div class=" col-2 row items-center">
         <div style="font-size: 18px;">
-        סיום:
+          סיום:
         </div>
       </div>
       <div class="col">
-    <q-input filled type="time" v-model="item.endTimeFormat" label="שעה"
-             stack-label>
-    </q-input>
+        <q-input filled type="time" v-model="item.endTimeFormat" label="שעה"
+                 stack-label>
+        </q-input>
       </div>
     </div>
     <span class="text-body1"><b>*תעריף:</b> {{ userInfo.wage }}  ש"ח לשעה</span>
     <div class="row flex-center">
       <q-btn :label="item.id ? 'עדכן' : 'הוסף'"
-             :disable="!filled"
+             :disable="this.$v.$invalid"
              type="submit"
              color="primary"/>
       <q-btn label="נקה" type="reset" color="primary" flat class="q-ml-sm"/>
@@ -56,6 +56,7 @@
 import {mapState, mapActions} from 'vuex';
 import utills from "../middleware/utill";
 import DBTables from "components/ShiftsTable";
+import {required} from "vuelidate/lib/validators";
 
 export default {
   name: "ShiftData",
@@ -70,36 +71,33 @@ export default {
     }
   },
   created() {
-    if (this.$route.params.id)
-      for (const key in this.editedShift)
-        this.item[key] = this.editedShift[key];
+    if (this.$route.params.id) {
+      const today = new Date();
+      if (!this.shifts.hasOwnProperty(today.getFullYear()))
+        this.$router.push('/')
+      else
+        for (const key in this.editedShift)
+          this.item[key] = this.editedShift[key];
+    }
   },
   computed: {
-    filled: {
-      get() {
-        return this.item.date && this.item.startTimeFormat && this.item.endTimeFormat
-      },
-      set() {
-      }
-    },
-    ...mapState('shifts', ['editedShift', 'userInfo'])
+    ...mapState('shifts', ['shifts', 'editedShift', 'userInfo'])
   },
   methods: {
     onSubmit() {
-      if (this.userInfo && this.userInfo.wage) {
-        const shift = this.calculateShift();
-        if (this.$route.params.id) {
-          shift.id = this.$route.params.id
-          this.updateShift(shift);
-          this.$router.push('/').catch(() => {
-          });
-        } else {
-          this.insertShift(shift);
-          this.resetForm();
-        }
+      const shift = this.calculateShift();
+      if (this.$route.params.id) {
+        shift.id = this.$route.params.id
+        this.updateShift(shift);
+        this.$router.push('/').catch(() => {
+        });
       } else {
+        this.insertShift(shift);
         this.resetForm();
       }
+      this.$q.dialog({
+        title: 'משמרת נוספה בהצלחה'
+      })
     },
     calculateShift() {
       return utills.makeShiftFromForm(this.item, this.userInfo.wage, this.userInfo.overtimeSettings)
@@ -111,6 +109,19 @@ export default {
     },
     ...mapActions('shifts', ['insertShift', 'updateShift', 'setEditedShift'])
   },
+  validations: {
+    item: {
+      date: {
+        required
+      },
+      startTimeFormat: {
+        required
+      },
+      endTimeFormat: {
+        required
+      },
+    }
+  }
 }
 </script>
 

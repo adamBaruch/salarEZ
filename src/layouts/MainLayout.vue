@@ -86,28 +86,28 @@ const fabs = [
     name: 'משמרות',
     color: 'primary',
     icon: 'event_note',
-    link: '/my_shifts',
+    link: 'my_shifts',
   },
   {
     name: 'התחלת משמרת',
     color: 'primary',
     icon: 'fas fa-stopwatch',
-    link: '/'
+    link: ''
   },
   {
     name: 'הגדרות',
     color: 'primary',
     icon: 'settings',
-    link: '/settings'
+    link: 'settings'
   }
 ]
 const linksData = [
-  {
-    title: 'אודות',
-    caption: '',
-    icon: 'info',
-    link: '/about'
-  },
+  // {
+  //   title: 'אודות',
+  //   caption: '',
+  //   icon: 'info',
+  //   link: '/about'
+  // },
   // {
   //   title: 'תלוש',
   //   caption: '',
@@ -136,17 +136,17 @@ export default {
       leftDrawerOpen: false,
       fabs: fabs,
       essentialLinks: linksData,
-      fabPos: [window.innerWidth-60, 18],
+      fabPos: [window.innerWidth - 60, 18],
       draggingFab: false,
     }
   },
-  computed:{
-    ...mapState('shifts',['userInfo','title'])
+  computed: {
+    ...mapState('shifts', ['userInfo', 'title'])
   },
   methods: {
     goTo(route) {
-      this.$router.push(route).catch(() => {
-      });
+      if (this.$route.name !== route)
+        this.$router.push('/' + route)
     },
     moveFab(ev) {
       this.draggingFab = ev.isFirst !== true && ev.isFinal !== true

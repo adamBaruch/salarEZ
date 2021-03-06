@@ -1,13 +1,18 @@
 <template>
   <div class="q-pa-md">
-    <div  class="clockBox">
-      <span class="clock">{{hoursFormat}}</span>
-      <span class="sep">{{colon }}</span>
-      <span class="clock">{{minutesFormat}}</span>
-      <span class="sep">{{colon }}</span>
-      <span class="clock">{{secondsFormat}}</span>
+    <q-skeleton v-if="!finishedLoading"
+                :type="'circle'"
+                size="300px"
+                class="bg-primary clockBox"
+    />
+    <div class="clockBox" v-if="finishedLoading">
+      <span class="clock">{{ hoursFormat }}</span>
+      <span class="sep">{{ colon }}</span>
+      <span class="clock">{{ minutesFormat }}</span>
+      <span class="sep">{{ colon }}</span>
+      <span class="clock">{{ secondsFormat }}</span>
     </div>
-    <div>
+    <div v-if="finishedLoading">
       <q-btn
         class=" btn q-pa-sm"
         push
@@ -52,33 +57,34 @@ export default {
       minutesFormat: '00',
       hoursFormat: '00',
       colon: ":",
-      started: false
+      started: false,
+      finishedLoading: false,
     }
   },
   computed: mapState('shifts', ['shifts', 'editedShift', 'userInfo']),
-  created() {
-    this.getUserInfo()
-      .then(() => {
-        if (this.userInfo.startTime != null) {
-          this.started = true;
-          this.item.start = this.userInfo.startTime
-          let duration = Math.floor((new Date().getTime() - this.userInfo.startTime) / 1000);
-          this.clock.hours = Math.floor(duration / 3600);
-          duration = duration - this.clock.hours * 3600;
-          this.clock.minutes = Math.floor(duration / 60);
-          duration = duration - this.clock.minutes * 60;
-          this.clock.seconds = duration;
-          this.secondsFormat = utills.digitizeSingle(this.clock.seconds);
-          this.minutesFormat = utills.digitizeSingle(this.clock.minutes);
-          this.hoursFormat = utills.digitizeSingle(this.clock.hours);
-          this.showClock();
-        }
-      })
-      .catch(() => {
-        console.log('לא עודכן שכר שעתי')
-      })
+  async created() {
+    if (this.userInfo.wage === '')
+      await this.getUserInfo()
+    if (this.userInfo.startTime != null) {
+      this.initializeClock();
+    }
+    this.finishedLoading = true;
   },
   methods: {
+    initializeClock() {
+      this.started = true;
+      this.item.start = this.userInfo.startTime
+      let duration = Math.floor((new Date().getTime() - this.userInfo.startTime) / 1000);
+      this.clock.hours = Math.floor(duration / 3600);
+      duration = duration - this.clock.hours * 3600;
+      this.clock.minutes = Math.floor(duration / 60);
+      duration = duration - this.clock.minutes * 60;
+      this.clock.seconds = duration;
+      this.secondsFormat = utills.digitizeSingle(this.clock.seconds);
+      this.minutesFormat = utills.digitizeSingle(this.clock.minutes);
+      this.hoursFormat = utills.digitizeSingle(this.clock.hours);
+      this.showClock();
+    },
     showClock() {
       this.interval = setInterval(() => {
           if (this.clock.seconds < 59) {
@@ -118,7 +124,7 @@ export default {
       this.started = false;
       this.item.end = new Date().getTime();
       this.item.duration = this.item.end - this.item.start;
-      this.insertShift(utills.makeShiftFromClock(this.item,this.userInfo.wage,this.userInfo.overtimeSettings));
+      this.insertShift(utills.makeShiftFromClock(this.item, this.userInfo.wage, this.userInfo.overtimeSettings));
       this.item = {};
       this.saveStartTime(null);
       this.clearDisplay();
@@ -132,17 +138,17 @@ export default {
       this.minutesFormat = '00';
       this.hoursFormat = '00';
     },
-    ...mapActions('shifts', ['insertShift', 'saveStartTime', 'getUserInfo','handleButtonClick'])
+    ...mapActions('shifts', ['insertShift', 'saveStartTime', 'getUserInfo', 'handleButtonClick'])
   }
 }
 </script>
 
 <style scoped>
 
-.btn{
+.btn {
   margin: auto 30px;
   -webkit-box-reflect: below 0 -webkit-gradient(linear, right top,
-  right bottom, from(transparent), to(rgba(255,255,255,0.4)));
+  right bottom, from(transparent), to(rgba(255, 255, 255, 0.4)));
 }
 
 .clock {
@@ -166,6 +172,7 @@ export default {
   align-items: center;
   justify-content: center;
   margin: 20px;
-  box-shadow: 0 3px 10px 3px rgba(51,150,243,.4);
+  box-shadow: 0 3px 10px 3px rgba(51, 150, 243, .4);
 }
+
 </style>

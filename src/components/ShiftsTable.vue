@@ -178,18 +178,7 @@
     <h5 v-if="finishedLoading && data.length === 0">
       אין משמרות להצגה
     </h5>
-    <div class="row" style="width: 100%">
-      <q-space/>
-      <q-btn rounded
-             fixed-center
-             label="הוספת משמרת"
-             class="q-my-xl q-px-sm"
-             icon-right="fas fa-stopwatch"
-             text-color="primary"
-             @click="goTo('/')"
-      />
     </div>
-  </div>
 </template>
 
 <style>
@@ -229,7 +218,8 @@ export default {
       yearFilter: '2021',
       monthFilter: new Date().getMonth() + 1,
       yearOptions: years,
-      monthOptions: months
+      monthOptions: months,
+      btnPos: [18,18]
     }
   },
   computed: mapState('shifts', [
@@ -243,7 +233,7 @@ export default {
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth() + 1;
-      await this.setDataTable({year, month});
+      await this.setTableData({year, month});
     }
     this.finishedLoading = true;
   },
@@ -251,16 +241,12 @@ export default {
     deleteRow(row) {
       this.deleteShift(row);
     },
-    goTo(route) {
-      this.$router.push(route).catch(() => {
-      })
-    },
     updateRow(row) {
       this.setEditedShift(row);
       this.$router.push('/update/' + row.id).catch(() => {
       });
     },
-    async setDataTable({year, month}) {
+    async setTableData({year, month}) {
       await this.getShifts({year, month})
       if (this.shifts.hasOwnProperty(year)) {
         if (this.shifts[year].hasOwnProperty(month)) {
@@ -274,7 +260,7 @@ export default {
         month: this.monthFilter
       }
       await this.getShifts(filter);
-      await this.setDataTable(filter);
+      await this.setTableData(filter);
     },
     ...mapActions('shifts', ['getShifts', 'deleteShift', 'setEditedShift', 'filterShifts'])
   },
