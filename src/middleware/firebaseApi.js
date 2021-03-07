@@ -5,8 +5,7 @@ async function getShiftsByMonth(year,month) {
   let userId = localStorage.getItem('userId');
   if (userId) {
     const ref = fireRefs.shiftsRef(userId,year,month)
-     const shifts = await firebaseDb.ref(ref).once('value')
-    return shifts.val();
+     return await firebaseDb.ref(ref).once('value')
   }
 }
 

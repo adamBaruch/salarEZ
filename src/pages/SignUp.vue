@@ -89,6 +89,10 @@ export default {
         this.setUserInfo({name: this.user.name})
         this.$router.push('/b/settings_init').catch(() => {})
       } catch (error) {
+        this.$q.dialog({
+          title: 'שגיאה',
+          message: error.message.includes('already') ? 'האימייל כבר רשום במערכת' : 'האימייל אינו תקין'
+        })
         console.log('error: ' + error)
       }
     },

@@ -1,5 +1,6 @@
 import firebaseApi from '../../middleware/firebaseApi'
 import firebase, {firebaseAuth} from "boot/firebase";
+
 const provider = new firebase.firebase.auth.GoogleAuthProvider();
 
 export default {
@@ -21,22 +22,41 @@ export default {
   },
 
   getShifts: async ({commit}, {year, month}) => {
-    const shifts = await firebaseApi.getShiftsByMonth(year, month);
-    let stateShifts = {[year]: {[month]: []}}
+    let shifts = {};
+    if (month === 'הכל') {
+      const months = await firebaseApi.getShiftByYear(year)
+      for (const monthData in months)
+        if (months.hasOwnProperty(monthData))
+          shifts[monthData] = months[monthData]
+    } else {
+      const monthData = await firebaseApi.getShiftsByMonth(year, month)
+      shifts[monthData.key] = monthData.val();
+    }
+    let stateShifts = {}
     let income = 0;
     let time = 0;
-    for (const day in shifts) {
-      if (shifts.hasOwnProperty(day))
-        for (const key in shifts[day]) {
-          if (shifts[day].hasOwnProperty(key)) {
-            let shift = shifts[day][key];
-            shift.id = key;
-            income += shift.payday;
-            time += shift.duration / 3600000;
-            stateShifts[year][month].push(shift);
+    for (const monthObj in shifts) {
+      if (shifts.hasOwnProperty(monthObj)) {
+        for (const day in shifts[monthObj]) {
+          if (shifts[monthObj].hasOwnProperty(day)) {
+            for (const key in shifts[monthObj][day]) {
+              if (shifts[monthObj][day].hasOwnProperty(key)) {
+                let shift = shifts[monthObj][day][key];
+                shift.id = key;
+                income += shift.payday;
+                time += shift.duration / 3600000;
+                if(!stateShifts[year])
+                  stateShifts[year] = {}
+                if(!stateShifts[year][monthObj])
+                  stateShifts[year][monthObj] = []
+                stateShifts[year][monthObj].push(shift);
+              }
+            }
           }
         }
+      }
     }
+    commit('setFilters',{year,month})
     commit('setIncome', income);
     commit('setTotalHours', time);
     commit('setShifts', stateShifts);
@@ -71,7 +91,7 @@ export default {
     commit('setEditedShift', shift);
   },
 
-  saveStartTime: async ({commit, state}, time) => {
+  async saveStartTime({commit, state}, time) {
     await firebaseApi.setUserInfo({startTime: time});
     commit('setStartTime', time);
   },
@@ -122,8 +142,8 @@ export default {
     dispatch('setUserInfo', {profileImg: result})
   },
 
-  setTitle: ({commit},title)=>{
-    commit('setTitle',title)
+  setTitle: ({commit}, title) => {
+    commit('setTitle', title)
   }
 }
 

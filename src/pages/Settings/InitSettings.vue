@@ -12,18 +12,12 @@
       fullscreen
       class="bg-primary text-white shadow-1"
     >
-      <q-carousel-slide name="style" class="column no-wrap flex-center">
+      <q-carousel-slide name="firstSlide" class="column no-wrap flex-center">
         <q-icon name="settings"/>
         <div class="q-mt-md text-center">
           <h3>הגדרות חשובות</h3>
           <q-input type="number" hint="שכר שעתי" v-model="newUserInfo.wage"></q-input>
           <q-btn flat outline :disable="newUserInfo.wage===''" @click="forward"> שמור </q-btn>
-        </div>
-      </q-carousel-slide>
-      <q-carousel-slide name="דגכ" class="column no-wrap flex-center">
-        <q-icon name="style 3x"/>
-        <div class="q-mt-md text-center">
-          ננה בננה
         </div>
       </q-carousel-slide>
     </q-carousel>
@@ -43,7 +37,7 @@ export default {
         profileImg:'https://cdn3.iconfinder.com/data/icons/mixed-communication-and-ui-pack-1/48/general_pack_NEW_glyph_profile-512.png',
         overtimeSettings: utils.defaultOvertimeSettings
       },
-      slide: 'style',
+      slide: 'firstSlide',
     }
   },
   created() {

@@ -1,48 +1,49 @@
 <template>
-
-  <q-form @submit="onSubmit" @reset="resetForm" class="q-gutter-md q-pr-md constrain2 column">
-    <div class="row">
-      <div class="col-2 row items-center" style="font-size: 18px">
+<div class="row justify-center q-pa-lg">
+  <q-form
+    @submit="onSubmit"
+    @reset="resetForm"
+    class="column form">
+    <div class="row pad">
+      <div class="col-4 row items-center" style="font-size: 18px">
         תאריך:
       </div>
       <div class="col">
         <q-input
-          filled
           :readonly="$route.params.id !== undefined"
           type="date"
           v-model="item.date"
-          label="תאריך "
+          label="תאריך"
           stack-label
         />
       </div>
     </div>
-    <div class="row">
-      <div class="col-2 row items-center">
+    <div class="row pad">
+      <div class="col-4 row items-center">
         <div style="font-size: 18px;">
           התחלה:
         </div>
       </div>
       <div class="col">
-        <q-input filled type="time" v-model="item.startTimeFormat"
+        <q-input type="time" v-model="item.startTimeFormat"
                  label="שעה"
                  stack-label>
         </q-input>
       </div>
     </div>
-    <div class="row">
-      <div class=" col-2 row items-center">
+    <div class="row pad">
+      <div class=" col-4 row items-center">
         <div style="font-size: 18px;">
           סיום:
         </div>
       </div>
       <div class="col">
-        <q-input filled type="time" v-model="item.endTimeFormat" label="שעה"
+        <q-input type="time" v-model="item.endTimeFormat" label="שעה"
                  stack-label>
         </q-input>
       </div>
     </div>
-    <span class="text-body1"><b>*תעריף:</b> {{ userInfo.wage }}  ש"ח לשעה</span>
-    <div class="row flex-center">
+    <div class="row flex-center pad">
       <q-btn :label="item.id ? 'עדכן' : 'הוסף'"
              :disable="this.$v.$invalid"
              type="submit"
@@ -50,6 +51,8 @@
       <q-btn label="נקה" type="reset" color="primary" flat class="q-ml-sm"/>
     </div>
   </q-form>
+  <span class="text-body2 absolute-bottom-right q-pa-sm"><b>*תעריף:</b> {{ userInfo.wage }}  ש"ח לשעה</span>
+</div>
 </template>
 
 <script>
@@ -126,4 +129,7 @@ export default {
 </script>
 
 <style scoped>
+.pad{
+  padding: 12px;
+}
 </style>

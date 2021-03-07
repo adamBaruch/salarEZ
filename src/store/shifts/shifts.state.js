@@ -1,6 +1,8 @@
 export default {
   title: 'salarEZ',
   shifts: {},
+  monthFilter: new Date().getMonth() + 1,
+  yearFilter: new Date().getFullYear(),
   editedShift: {
     day: '',
     month: '',

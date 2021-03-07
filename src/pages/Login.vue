@@ -78,6 +78,10 @@ export default {
         await this.passwordLogin(this.tempUser);
         await this.$router.push('/')
       } catch (err) {
+        this.$q.dialog({
+          title: 'שגיאה',
+          message: 'אימייל או סיסמא אינם נכונים'
+        })
         console.log(err)
       }
     },

@@ -74,7 +74,7 @@ export default {
   }),
 
   resetShifts: ((state) => {
-    state.shifts = [];
+    state.shifts = {};
   }),
 
   resetUserInfo: ((state) => {
@@ -92,5 +92,10 @@ export default {
     state.income = 0;
     state.totalHours = 0;
     state.overtimeSettings = '';
+  }),
+
+  setFilters: ((state, {year, month}) =>{
+    state.yearFilter = year;
+    state.monthFilter = month;
   })
 }

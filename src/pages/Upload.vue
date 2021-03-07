@@ -15,7 +15,6 @@
     <q-file
         v-model="photo"
         label="Pick files"
-        filled
         counter
         max-files="3"
         multiple

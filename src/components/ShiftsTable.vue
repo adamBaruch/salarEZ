@@ -164,28 +164,25 @@
           </q-td>
         </q-tr>
       </template>
-      <template v-slot:bottom-row>
+      <template v-slot:bottom-row >
         <q-tr class="centered">
           <q-td><span></span></q-td>
           <q-td><span></span></q-td>
           <q-td><span></span></q-td>
           <q-td><span></span></q-td>
           <q-td><b>{{ totalHours.toFixed(2) }}</b></q-td>
-          <q-td><b>{{  '\u20aa ' + income.toFixed(2) }}</b></q-td>
+          <q-td><b>{{ income.toFixed(2) }}</b></q-td>
         </q-tr>
       </template>
     </q-table>
     <h5 v-if="finishedLoading && data.length === 0">
       אין משמרות להצגה
     </h5>
-    </div>
+  </div>
 </template>
 
-<style>
-</style>
-
 <script>
-import {mapState, mapActions} from 'vuex'
+import {mapState, mapActions, mapGetters, mapMutations} from 'vuex'
 
 const years = [];
 const months = [];
@@ -208,7 +205,7 @@ export default {
         {name: 'start', align: 'center', label: 'התחלה', field: 'start', sortable: true},
         {name: 'end', align: 'center', label: 'סיום', field: 'end', sortable: true},
         {name: 'duration', align: 'center', label: 'זמן משמרת', field: 'duration', sortable: true},
-        {name: 'payday', align: 'center', label: 'שכר יומי', field: 'payday'},
+        {name: 'payday', align: 'center', label:'\u20aa ' +  'שכר יומי' , field: 'payday'},
       ],
       data: [],
       year: new Date().getFullYear(),
@@ -219,22 +216,19 @@ export default {
       monthFilter: new Date().getMonth() + 1,
       yearOptions: years,
       monthOptions: months,
-      btnPos: [18,18]
+      btnPos: [18, 18]
     }
   },
-  computed: mapState('shifts', [
-    'shifts',
-    'editedShift',
-    'income',
-    'totalHours'
-  ]),
+  computed: {
+    ...mapState('shifts', ['shifts', 'editedShift', 'income', 'totalHours']),
+    ...mapGetters('shifts', ['tableFilter']),
+  },
   async created() {
-    if (this.shifts.length !== 0) {
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = today.getMonth() + 1;
-      await this.setTableData({year, month});
-    }
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    await this.getShifts({year, month})
+    this.data = this.tableFilter
     this.finishedLoading = true;
   },
   methods: {
@@ -246,21 +240,13 @@ export default {
       this.$router.push('/update/' + row.id).catch(() => {
       });
     },
-    async setTableData({year, month}) {
-      await this.getShifts({year, month})
-      if (this.shifts.hasOwnProperty(year)) {
-        if (this.shifts[year].hasOwnProperty(month)) {
-          this.data = this.shifts[year][month]
-        }
-      }
-    },
     async filter() {
       const filter = {
         year: this.yearFilter,
         month: this.monthFilter
       }
       await this.getShifts(filter);
-      await this.setTableData(filter);
+      this.data = this.tableFilter
     },
     ...mapActions('shifts', ['getShifts', 'deleteShift', 'setEditedShift', 'filterShifts'])
   },
@@ -292,6 +278,9 @@ export default {
     position: sticky
     z-index: 1
   /* this will be the loading indicator */
+
+
+
 
 
 
