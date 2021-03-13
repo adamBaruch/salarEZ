@@ -1,8 +1,10 @@
 <template>
   <q-page class="flex flex-center column">
-    <div class="flex flex-center q-ma-sm">
-      <img src="../assets/salarEZ_logo.png" class="q-ma-md" alt="logo">
-    </div>
+    <q-avatar class="flex flex-center q-ma-sm">
+      <q-img src="../../public/icons/favicon-128x128.png"
+           class="q-ma-md"
+           alt="logo"/>
+    </q-avatar>
     <div class="flex flex-center column">
       <q-form @submit="createUser" class="column">
         <q-input

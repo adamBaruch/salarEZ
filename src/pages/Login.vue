@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center column bg-white">
     <div class="flex flex-center q-ma-lg ">
-      <img src="../assets/salarEZ_logo.png" alt="logo">
+      <img src="../../public/icons/favicon-128x128.png" alt="logo">
     </div>
     <div class="flex flex-center column">
       <q-form class="column">
