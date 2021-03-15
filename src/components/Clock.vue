@@ -2,15 +2,17 @@
   <div class="q-pa-md">
     <q-skeleton v-if="!finishedLoading"
                 :type="'circle'"
-                size="300px"
+                size="250px"
                 class="bg-primary clockBox"
     />
     <div class="clockBox" v-if="finishedLoading">
-      <span class="clock">{{ hoursFormat }}</span>
-      <span class="sep">{{ colon }}</span>
-      <span class="clock">{{ minutesFormat }}</span>
-      <span class="sep">{{ colon }}</span>
-      <span class="clock">{{ secondsFormat }}</span>
+      <div style="padding: 65px 15px">
+        <span class="clock">{{ hoursFormat }}</span>
+        <span class="sep">{{ colon }}</span>
+        <span class="clock">{{ minutesFormat }}</span>
+        <span class="sep">{{ colon }}</span>
+        <span class="clock">{{ secondsFormat }}</span>
+      </div>
     </div>
     <div v-if="finishedLoading">
       <q-btn
@@ -152,27 +154,27 @@ export default {
 }
 
 .clock {
-  font-size: 60px;
+  font-size: 45px;
   width: 75px;
   height: 10px;
   text-align: center;
 }
 
 .sep {
-  font-size: 60px;
+  font-size: 45px;
   width: 20px;
   text-align: center;
 }
 
 .clockBox {
   opacity: 0.7;
-  padding: 100px 40px;
+  padding: 5vw;
   border: 6px solid #3396f3;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
-  margin: 20px;
   box-shadow: 0 3px 10px 3px rgba(51, 150, 243, .4);
+  margin-bottom: 40px;
 }
 
 </style>

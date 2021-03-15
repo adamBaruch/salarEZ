@@ -1,7 +1,10 @@
 <template>
-  <q-page class="flex flex-center column bg-white">
+  <q-page class="flex flex-center column">
     <div class="flex flex-center q-ma-lg ">
-      <img src="../../public/icons/favicon-128x128.png" alt="logo">
+      <img src="../assets/salarEZ_logo.png"
+           alt="logo"
+           style="max-height: 30vh"
+      >
     </div>
     <div class="flex flex-center column">
       <q-form class="column">
@@ -10,7 +13,7 @@
                  v-model="tempUser.email"
                  label="הכנס אימייל"
                  type="email"
-                 style="width: 350px"
+                 style="width: 90vw;max-width: 400px"
                  @input="this.$v.tempUser.email.$touch"
                  :lazy-rules="true"
                  :rules="[ val => !!val || 'כתובת אימייל',
@@ -34,7 +37,8 @@
             <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd"/>
           </template>
         </q-input>
-        <q-btn no-caps rounded color="blue" :disable="this.$v.$invalid" icon-right="login" label="התחבר" @click="passwordSignIn"
+        <q-btn no-caps rounded color="blue" :disable="this.$v.$invalid" icon-right="login" label="התחבר"
+               @click="passwordSignIn"
                class="q-mb-sm q-py-xs"/>
         <q-separator size="1px" color="dark" inset="true" class="q-my-sm"/>
         <q-btn rounded
@@ -43,7 +47,7 @@
                icon-right="fab fa-google"
                label="google"
                class="q-mt-sm q-py-xs"
-               @click="googleRegister"
+               @click="googleLogin"
         />
         <div class="flex flex-center q-ma-lg">
           <q-btn flat dense @click="goToSignUp">הרשמה</q-btn>
@@ -54,8 +58,9 @@
 </template>
 
 <script>
-import {email, alphaNum, minLength,required} from 'vuelidate/lib/validators'
+import {email, alphaNum, minLength, required} from 'vuelidate/lib/validators'
 import {mapActions} from "vuex";
+import {firebaseAuth} from "boot/firebase";
 
 export default {
   name: "login",
@@ -68,11 +73,16 @@ export default {
       isPwd: true
     }
   },
+  async created() {
+    const res = await firebaseAuth.getRedirectResult()
+      if (res.user){
+        if (res.additionalUserInfo.isNewUser)
+          await this.$router.push('/b/settings_init')
+        else
+          await this.$router.push('/')
+      }
+  },
   methods: {
-    async googleRegister() {
-      const res = await this.googleLogin()
-      await this.$router.push(res)
-    },
     async passwordSignIn() {
       try {
         await this.passwordLogin(this.tempUser);

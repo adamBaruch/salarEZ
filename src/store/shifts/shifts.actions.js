@@ -13,12 +13,8 @@ export default {
     return firebaseAuth.signInWithEmailAndPassword(email, password);
   },
 
-  googleLogin: async ({}) => {
-    const res = await firebaseAuth.signInWithPopup(provider);
-    if (res.additionalUserInfo.isNewUser)
-      return '/b/settings_init'
-    else
-      return '/'
+  googleLogin: ({}) => {
+     firebaseAuth.signInWithRedirect(provider)
   },
 
   getShifts: async ({commit}, {year, month}) => {
@@ -45,9 +41,9 @@ export default {
                 shift.id = key;
                 income += shift.payday;
                 time += shift.duration / 3600000;
-                if(!stateShifts[year])
+                if (!stateShifts[year])
                   stateShifts[year] = {}
-                if(!stateShifts[year][monthObj])
+                if (!stateShifts[year][monthObj])
                   stateShifts[year][monthObj] = []
                 stateShifts[year][monthObj].push(shift);
               }
@@ -56,7 +52,7 @@ export default {
         }
       }
     }
-    commit('setFilters',{year,month})
+    commit('setFilters', {year, month})
     commit('setIncome', income);
     commit('setTotalHours', time);
     commit('setShifts', stateShifts);

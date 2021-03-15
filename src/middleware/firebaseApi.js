@@ -44,6 +44,9 @@ function getUserInfo() {
     .then(res => {
       return res.val();
     })
+    .catch(err=>{
+      console.log(err)
+    })
 }
 
 function setUserInfo(userInfo){

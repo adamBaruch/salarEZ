@@ -1,14 +1,11 @@
 <template>
-<div class="row justify-center q-pa-lg">
-  <q-form
-    @submit="onSubmit"
-    @reset="resetForm"
-    class="column form">
+<div class="row justify-center">
+  <div class="form">
     <div class="row pad">
       <div class="col-4 row items-center" style="font-size: 18px">
         תאריך:
       </div>
-      <div class="col">
+      <div class="col inputs-class">
         <q-input
           :readonly="$route.params.id !== undefined"
           type="date"
@@ -24,7 +21,7 @@
           התחלה:
         </div>
       </div>
-      <div class="col">
+      <div class="col-8 inputs-class">
         <q-input type="time" v-model="item.startTimeFormat"
                  label="שעה"
                  stack-label>
@@ -37,8 +34,9 @@
           סיום:
         </div>
       </div>
-      <div class="col">
-        <q-input type="time" v-model="item.endTimeFormat" label="שעה"
+      <div class="col-8 inputs-class">
+        <q-input type="time" v-model="item.endTimeFormat"
+                 label="שעה"
                  stack-label>
         </q-input>
       </div>
@@ -46,11 +44,11 @@
     <div class="row flex-center pad">
       <q-btn :label="item.id ? 'עדכן' : 'הוסף'"
              :disable="this.$v.$invalid"
-             type="submit"
+             @click="onSubmit"
              color="primary"/>
-      <q-btn label="נקה" type="reset" color="primary" flat class="q-ml-sm"/>
+      <q-btn label="נקה" @click="resetForm" color="primary" flat class="q-ml-sm"/>
     </div>
-  </q-form>
+  </div>
   <span class="text-body2 absolute-bottom-right q-pa-sm"><b>*תעריף:</b> {{ userInfo.wage }}  ש"ח לשעה</span>
 </div>
 </template>
@@ -131,5 +129,9 @@ export default {
 <style scoped>
 .pad{
   padding: 12px;
+}
+.inputs-class{
+  padding-left: 30px;
+  min-width: 80px;
 }
 </style>

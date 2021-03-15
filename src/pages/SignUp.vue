@@ -1,10 +1,11 @@
 <template>
   <q-page class="flex flex-center column">
-    <q-avatar class="flex flex-center q-ma-sm">
-      <q-img src="../../public/icons/favicon-128x128.png"
-           class="q-ma-md"
-           alt="logo"/>
-    </q-avatar>
+    <div class="flex flex-center q-ma-lg ">
+      <img src="../assets/salarEZ_logo.png"
+           alt="logo"
+           style="max-height: 30vh"
+      >
+    </div>
     <div class="flex flex-center column">
       <q-form @submit="createUser" class="column">
         <q-input
@@ -12,7 +13,7 @@
           standout="text-grey-5"
           v-model="user.name"
           label="הכנס שם"
-          style="width: 350px"
+          style="width: 90vw;max-width: 400px"
           v-model.trim="user.name"
           :lazy-rules="true"
           :rules="[ val => !!val || 'אנא בחר שם',
@@ -70,7 +71,7 @@
 
 <script>
 import {email, minLength, alphaNum, required} from 'vuelidate/lib/validators'
-import {mapActions,mapMutations} from "vuex";
+import {mapActions, mapMutations} from "vuex";
 
 export default {
   name: "SignUp",
@@ -89,7 +90,8 @@ export default {
       try {
         await this.passwordRegister(this.user)
         this.setUserInfo({name: this.user.name})
-        this.$router.push('/b/settings_init').catch(() => {})
+        this.$router.push('/b/settings_init').catch(() => {
+        })
       } catch (error) {
         this.$q.dialog({
           title: 'שגיאה',
@@ -98,11 +100,12 @@ export default {
         console.log('error: ' + error)
       }
     },
-    gotoLogin(){
-      this.$router.push('/b/login').catch(() => {})
+    gotoLogin() {
+      this.$router.push('/b/login').catch(() => {
+      })
     },
-    ...mapActions('shifts',['passwordRegister']),
-    ...mapMutations('shifts',['setUserInfo'])
+    ...mapActions('shifts', ['passwordRegister']),
+    ...mapMutations('shifts', ['setUserInfo'])
   },
   validations: {
     user: {

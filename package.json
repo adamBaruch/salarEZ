@@ -13,7 +13,7 @@
     "@quasar/extras": "^1.0.0",
     "cordova": "^10.0.0",
     "core-js": "^3.6.5",
-    "firebase": "8.2.3",
+    "firebase": "8.3.0",
     "lodash": "4.17.20",
     "quasar": "1.15.5",
     "vuelidate": "0.7.6",

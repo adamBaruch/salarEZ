@@ -67,10 +67,12 @@ export default {
       pic: null,
       logoutMs:{
         title: 'התנתקות',
+        cancel: true,
         message: 'האם אתה בטוח שברצונך להתנתק?',
       },
       pictureMs:{
         title: 'החלפת תמונת פרופיל',
+        cancel: true,
         message: 'להחלפת תמונה מתוך הגלריה לחץ לאישור'
       }
     }
@@ -91,7 +93,8 @@ export default {
       })
     },
     confirmDialog(Ms,func){
-      this.$q.dialog(Ms).onOk(() => {
+      this.$q.dialog(Ms)
+        .onOk(() => {
         func();
       })
     },
