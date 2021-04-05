@@ -1,5 +1,5 @@
 <template>
-  <q-page>
+  <q-page class="">
     <div class="constrain q-pa-sm">
       <q-btn-toggle
         v-model="secondModel"
@@ -13,8 +13,10 @@
         :options="this.options"
       />
     </div>
-      <Clock v-if="secondModel" id="clock"/>
-      <ShiftData v-else/>
+      <q-page-container >
+        <Clock v-if="secondModel" id="clock"/>
+        <ShiftData v-else/>
+      </q-page-container>
   </q-page>
 </template>
 
@@ -41,8 +43,9 @@ export default {
     this.setTitle('salarEZ')
   },
   computed: mapState('shifts', ['shifts']),
-  methods: {...mapActions('shifts', ['getShifts']),
-    ...mapMutations('shifts',['setTitle'])
+  methods: {
+    ...mapActions('shifts', ['getShifts']),
+    ...mapMutations('shifts', ['setTitle'])
   }
 }
 </script>

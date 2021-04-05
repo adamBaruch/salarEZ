@@ -1,11 +1,11 @@
 <template>
-<div class="row justify-center">
-  <div class="form">
+<div>
+  <div class=" form">
     <div class="row pad">
       <div class="col-4 row items-center" style="font-size: 18px">
         תאריך:
       </div>
-      <div class="col inputs-class">
+      <div class="col">
         <q-input
           :readonly="$route.params.id !== undefined"
           type="date"
@@ -21,7 +21,7 @@
           התחלה:
         </div>
       </div>
-      <div class="col-8 inputs-class">
+      <div class="col">
         <q-input type="time" v-model="item.startTimeFormat"
                  label="שעה"
                  stack-label>
@@ -34,7 +34,7 @@
           סיום:
         </div>
       </div>
-      <div class="col-8 inputs-class">
+      <div class="col">
         <q-input type="time" v-model="item.endTimeFormat"
                  label="שעה"
                  stack-label>
@@ -129,9 +129,5 @@ export default {
 <style scoped>
 .pad{
   padding: 12px;
-}
-.inputs-class{
-  padding-left: 30px;
-  min-width: 80px;
 }
 </style>

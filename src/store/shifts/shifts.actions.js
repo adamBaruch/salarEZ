@@ -1,8 +1,6 @@
 import firebaseApi from '../../middleware/firebaseApi'
 import firebase, {firebaseAuth} from "boot/firebase";
 
-const provider = new firebase.firebase.auth.GoogleAuthProvider();
-
 export default {
 
   passwordRegister: async ({commit}, data) => {
@@ -11,10 +9,6 @@ export default {
 
   passwordLogin: ({}, {email, password}) => {
     return firebaseAuth.signInWithEmailAndPassword(email, password);
-  },
-
-  googleLogin: ({}) => {
-     firebaseAuth.signInWithRedirect(provider)
   },
 
   getShifts: async ({commit}, {year, month}) => {

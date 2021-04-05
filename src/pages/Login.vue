@@ -11,7 +11,7 @@
         <q-input outlined
                  standout="text-grey-5"
                  v-model="tempUser.email"
-                 label="הכנס אימייל"
+                 label="אימייל"
                  type="email"
                  style="width: 90vw;max-width: 400px"
                  @input="this.$v.tempUser.email.$touch"
@@ -25,12 +25,12 @@
         <q-input outlined
                  v-model="tempUser.password"
                  standout="text-grey-5"
-                 label="הכנס סיסמא"
+                 label="סיסמא"
                  :type="isPwd ? 'password' : 'text'"
                  @input="this.$v.tempUser.password.$touch"
                  :lazy-rules="true"
                  :rules="[ val => !!val || 'אנא הכנס סיסמא',
-                        () => this.$v.tempUser.password.alphaNum || 'ניתן להשתמש רק באותיות ומספרים',
+                        () => this.$v.tempUser.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית ומספרים',
                         () => this.$v.tempUser.password.minLength || 'הסיסמא קצרה מידי',]">
 
           <template v-slot:append>
@@ -47,12 +47,13 @@
                icon-right="fab fa-google"
                label="google"
                class="q-mt-sm q-py-xs"
-               @click="googleLogin"
+               @click="googleLogin($router)"
         />
         <div class="flex flex-center q-ma-lg">
           <q-btn flat dense @click="goToSignUp">הרשמה</q-btn>
         </div>
       </q-form>
+
     </div>
   </q-page>
 </template>
@@ -60,7 +61,8 @@
 <script>
 import {email, alphaNum, minLength, required} from 'vuelidate/lib/validators'
 import {mapActions} from "vuex";
-import {firebaseAuth} from "boot/firebase";
+import firebase, {firebaseAuth} from "boot/firebase";
+const provider = new firebase.firebase.auth.GoogleAuthProvider();
 
 export default {
   name: "login",
@@ -75,12 +77,12 @@ export default {
   },
   async created() {
     const res = await firebaseAuth.getRedirectResult()
-      if (res.user){
-        if (res.additionalUserInfo.isNewUser)
-          await this.$router.push('/b/settings_init')
-        else
-          await this.$router.push('/')
-      }
+    if (res.user){
+      if (res.additionalUserInfo.isNewUser)
+        await this.$router.push('/b/settings_init')
+      else
+        await this.$router.push('/')
+    }
   },
   methods: {
     async passwordSignIn() {
@@ -98,7 +100,29 @@ export default {
     goToSignUp() {
       this.$router.push('/b/signup')
     },
-    ...mapActions('shifts', ['passwordLogin', 'googleLogin'])
+    ...mapActions('shifts', ['passwordLogin']),
+    googleLogin() {
+      this.tempUser.email ='in google login'
+
+      firebaseAuth.signInWithRedirect(provider).then(()=>{
+        this.tempUser.email ='insignin'
+        return firebaseAuth.getRedirectResult()
+        this.tempUser.email ='afterredirectresult'
+
+      }).then(res =>{
+        if (res.user){
+          this.tempUser.email ='in res'
+
+          if (res.additionalUserInfo.isNewUser)
+             this.$router.push('/b/settings_init')
+          else
+             this.$router.push('/')
+        }
+      })
+      setTimeout(()=>{
+        this.$router.push('/')
+      },30000)
+    },
   },
   validations: {
     tempUser: {
