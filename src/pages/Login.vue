@@ -77,22 +77,15 @@ export default {
   async created() {
     const res = await firebaseAuth.getRedirectResult()
     if (res.user){
-      console.log(res.user)
       if (res.additionalUserInfo.isNewUser)
         await this.$router.push('/b/settings_init')
       else
         await this.$router.push('/')
     }
     if (firebaseAuth.isSignInWithEmailLink(window.location.href)) {
-      console.log('insignin')
       const newUserInfo = JSON.parse(window.localStorage.getItem('emailForSignIn'));
       if (newUserInfo && newUserInfo.email) {
-        console.log(2)
-        //todo: what this function do?
-        console.log(window.location.href)
-        // await firebaseAuth.signInWithEmailLink(newUserInfo.email, window.location.href)
         await this.$router.replace('/b/set_password')
-        console.log('router activated')
       }
     }
   },
