@@ -29,13 +29,16 @@ export default function (/* { store, ssrContext } */) {
 
   window.userId = localStorage.getItem('userId');
   Router.beforeResolve((to, from, next) => {
+    console.log('in guard')
     let userId = firebaseAuth.currentUser == null ? null : firebaseAuth.currentUser.uid
     if (userId == null) {
+      console.log('userid is null')
       userId = localStorage.getItem('userId')
       window.userId = userId;
     }
     if (userId && to.meta.authNotRequired || !userId && !to.meta.authNotRequired) {
       const path = !userId ? '/b/login' : '/'
+      console.log(path)
       return next(path)
     }
     next()

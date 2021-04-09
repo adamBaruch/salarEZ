@@ -77,6 +77,12 @@ const routes = [
         meta: {authNotRequired: true},
       },
       {
+        path: 'set_password',
+        name: 'Login',
+        component: () => import('pages/SetPassword.vue'),
+        meta: {authNotRequired: true},
+      },
+      {
         path: 'settings_init',
         name: 'settings_init',
         component: () => import('pages/Settings/InitSettings'),

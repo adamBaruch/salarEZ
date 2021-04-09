@@ -7,7 +7,7 @@
       >
     </div>
     <div class="flex flex-center column">
-      <q-form @submit="createUser" class="column">
+      <q-form @submit="sendEmail" class="column">
         <q-input
           outlined
           standout="text-grey-5"
@@ -34,32 +34,13 @@
             <q-icon name="mail"/>
           </template>
         </q-input>
-        <q-input
-          outlined
-          standout="text-grey-5"
-          v-model="user.password"
-          label="הכנס סיסמא"
-          :type="isPwd ? 'password' : 'text'"
-          @input="this.$v.user.password.$touch"
-          :lazy-rules="true"
-          :rules="[ val => !!val || 'אנא הכנס סיסמא',
-                        () => this.$v.user.password.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
-                        () => this.$v.user.password.minLength || 'סיסמא קצרה מידי']">
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            />
-          </template>
-        </q-input>
         <q-btn
           rounded
           class="q-mb-sm q-py-xs"
           color="blue"
           icon-right="login"
           :disable="this.$v.$invalid"
-          @click="createUser()"
+          @click="sendEmail()"
           label="הרשמה"/>
       </q-form>
     </div>
@@ -70,8 +51,22 @@
 </template>
 
 <script>
-import {email, minLength, alphaNum, required} from 'vuelidate/lib/validators'
-import {mapActions, mapMutations} from "vuex";
+import {email, minLength, required} from 'vuelidate/lib/validators'
+import {firebaseAuth} from "boot/firebase";
+
+const actionCodeSettings = {
+  url: 'https://salar-ez.web.app',
+  handleCodeInApp: true,
+  iOS: {
+    bundleId: 'com.example.ios'
+  },
+  android: {
+    packageName: 'com.shembeku.salarEZ',
+    installApp: true,
+    minimumVersion: '12'
+  },
+  dynamicLinkDomain: 'salarez.page.link'
+};
 
 export default {
   name: "SignUp",
@@ -82,30 +77,22 @@ export default {
         email: null,
         password: null,
       },
-      isPwd: true,
     }
   },
   methods: {
-    async createUser() {
-      try {
-        await this.passwordRegister(this.user)
-        this.setUserInfo({name: this.user.name})
-        this.$router.push('/b/settings_init').catch(() => {
-        })
-      } catch (error) {
-        this.$q.dialog({
-          title: 'שגיאה',
-          message: error.message.includes('already') ? 'האימייל כבר רשום במערכת' : 'האימייל אינו תקין'
-        })
-        console.log('error: ' + error)
-      }
+    async sendEmail(){
+      await firebaseAuth.sendSignInLinkToEmail(this.user.email, actionCodeSettings)
+      const newUserInfo = JSON.stringify({email: this.user.email,name: this.user.name})
+      window.localStorage.setItem('emailForSignIn', newUserInfo);
+      this.$q.dialog({
+        title: 'אימייל לוידוא נשלח',
+        message: 'יש לאשר את המייל באמצעות לחיצה על הקישור'
+      })
     },
     gotoLogin() {
       this.$router.push('/b/login').catch(() => {
       })
     },
-    ...mapActions('shifts', ['passwordRegister']),
-    ...mapMutations('shifts', ['setUserInfo'])
   },
   validations: {
     user: {
@@ -116,12 +103,7 @@ export default {
       name: {
         required,
         minLength: minLength(2)
-      },
-      password: {
-        required,
-        alphaNum,
-        minLength: minLength(6)
-      },
+      }
     }
   }
 }

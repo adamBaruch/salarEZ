@@ -1,5 +1,6 @@
 import firebaseApi from '../../middleware/firebaseApi'
 import firebase, {firebaseAuth} from "boot/firebase";
+const provider = new firebase.firebase.auth.GoogleAuthProvider();
 
 export default {
 
@@ -9,6 +10,19 @@ export default {
 
   passwordLogin: ({}, {email, password}) => {
     return firebaseAuth.signInWithEmailAndPassword(email, password);
+  },
+
+  googleLogin: async ({},router) =>{
+    firebaseAuth.signInWithRedirect(provider).then(()=>{
+      return firebaseAuth.getRedirectResult()
+    }).then(res =>{
+      if (res.user){
+        if (res.additionalUserInfo.isNewUser)
+          router.push('/b/settings_init')
+        else
+          router.push('/')
+      }
+    })
   },
 
   getShifts: async ({commit}, {year, month}) => {

@@ -61,8 +61,7 @@
 <script>
 import {email, alphaNum, minLength, required} from 'vuelidate/lib/validators'
 import {mapActions} from "vuex";
-import firebase, {firebaseAuth} from "boot/firebase";
-const provider = new firebase.firebase.auth.GoogleAuthProvider();
+import {firebaseAuth} from "boot/firebase";
 
 export default {
   name: "login",
@@ -78,10 +77,23 @@ export default {
   async created() {
     const res = await firebaseAuth.getRedirectResult()
     if (res.user){
+      console.log(res.user)
       if (res.additionalUserInfo.isNewUser)
         await this.$router.push('/b/settings_init')
       else
         await this.$router.push('/')
+    }
+    if (firebaseAuth.isSignInWithEmailLink(window.location.href)) {
+      console.log('insignin')
+      const newUserInfo = JSON.parse(window.localStorage.getItem('emailForSignIn'));
+      if (newUserInfo && newUserInfo.email) {
+        console.log(2)
+        //todo: what this function do?
+        console.log(window.location.href)
+        // await firebaseAuth.signInWithEmailLink(newUserInfo.email, window.location.href)
+        await this.$router.replace('/b/set_password')
+        console.log('router activated')
+      }
     }
   },
   methods: {
@@ -100,29 +112,7 @@ export default {
     goToSignUp() {
       this.$router.push('/b/signup')
     },
-    ...mapActions('shifts', ['passwordLogin']),
-    googleLogin() {
-      this.tempUser.email ='in google login'
-
-      firebaseAuth.signInWithRedirect(provider).then(()=>{
-        this.tempUser.email ='insignin'
-        return firebaseAuth.getRedirectResult()
-        this.tempUser.email ='afterredirectresult'
-
-      }).then(res =>{
-        if (res.user){
-          this.tempUser.email ='in res'
-
-          if (res.additionalUserInfo.isNewUser)
-             this.$router.push('/b/settings_init')
-          else
-             this.$router.push('/')
-        }
-      })
-      setTimeout(()=>{
-        this.$router.push('/')
-      },30000)
-    },
+    ...mapActions('shifts', ['passwordLogin','googleLogin']),
   },
   validations: {
     tempUser: {
