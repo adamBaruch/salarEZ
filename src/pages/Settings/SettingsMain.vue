@@ -48,7 +48,7 @@
         rounded
         class="q-ma-md q-pa-xs"
         color="primary"
-        @click="confirmDialog(logoutMs,signOut)">
+        @click="confirmDialog(logoutMs,logout)">
         התנתק
       </q-btn>
     </q-page-sticky>
@@ -58,7 +58,6 @@
 
 <script>
 import {mapActions, mapMutations, mapState} from "vuex";
-import {firebaseAuth} from "boot/firebase";
 
 export default {
   name: "SettingsMain",
@@ -84,13 +83,8 @@ export default {
     ...mapState('shifts',['userInfo'])
   },
   methods: {
-    signOut() {
-      const self = this;
-      firebaseAuth.signOut().then(() => {
-        localStorage.removeItem('userId')
-        this.resetState();
-        self.$router.push('/b/login')
-      })
+    logout() {
+      this.signOut(this.$router)
     },
     confirmDialog(Ms,func){
       this.$q.dialog(Ms)
@@ -101,7 +95,7 @@ export default {
     changePic(){
       this.$refs.file.pickFiles()
     },
-    ...mapActions('shifts', ['resetState','savePic']),
+    ...mapActions('shifts', ['savePic','signOut']),
     ...mapMutations('shifts', ['setTitle'])
   }
 }

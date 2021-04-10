@@ -25,6 +25,7 @@ const firebaseStorage = firebaseApp.storage();
 
 firebaseAuth.onAuthStateChanged(user => {
   if (user) {
+    console.log(user)
     window.userId = user.uid;
     localStorage.setItem("userId",user.uid);
   }

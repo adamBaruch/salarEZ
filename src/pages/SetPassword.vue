@@ -6,13 +6,15 @@
            style="max-height: 30vh"
       >
     </div>
+    <q-form class="column">
     <q-input outlined
              standout="text-grey-5"
              v-model="pass1"
              label="סיסמא חדשה"
-             type="password"
+             :type="isPwd ? 'password' : 'text'"
              style="width: 90vw;max-width: 400px"
              @input="this.$v.pass1.$touch"
+             :disable="disableInputs"
              :lazy-rules="true"
              :rules="[ val => !!val || 'אנא הכנס סיסמא',
                         () => this.$v.pass1.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
@@ -29,10 +31,10 @@
     <q-input outlined
              standout="text-grey-5"
              v-model="pass2"
-             label="סיסמא חדשה"
-             type="password"
-             style="width: 90vw;max-width: 400px"
+             label="אימות סיסמא"
+             :type="isPwd ? 'password' : 'text'"
              @input="this.$v.pass2.$touch"
+             :disable="disableInputs"
              :lazy-rules="true"
              :rules="[ val => !!val || 'אנא הכנס סיסמא',
                         () => this.$v.pass2.alphaNum || 'ניתן להשתמש רק באותיות באנגלית או במספרים',
@@ -51,9 +53,9 @@
       class="q-mb-sm q-py-xs"
       color="blue"
       icon-right="login"
-      :disable="this.$v.$invalid && !passMatch"
-      @click="createUser()"
+      @click="checkPasswords"
       label="הרשמה"/>
+    </q-form>
   </q-page>
 </template>
 
@@ -65,6 +67,7 @@ export default {
   name: "SetPassword",
   data() {
     return {
+      disableInputs: false,
       pass1: '',
       pass2: '',
       isPwd: true,
@@ -84,14 +87,29 @@ export default {
     }
   },
   methods: {
+    checkPasswords(){
+      if(this.passMatch && !this.$v.$invalid)
+        this.createUser()
+      else this.$q.dialog({
+        title: 'שגיאה',
+        message: 'סיסמאות לא תואמות. נסה שנית'
+      })
+    },
     async createUser() {
       try {
         this.tempUser.password = this.pass1;
         await this.passwordRegister(this.tempUser)
         this.setUserInfo({name: this.tempUser.name})
         window.localStorage.removeItem('emailForSignIn');
-        this.$router.push('/b/settings_init').catch(() => {
+        window.open('/#/b/settings_init', '_blank');
+        this.$q.dialog({
+          title: 'פעולה בוצעה בהצלחה',
+          message: 'כעת ניתן להתחבר לשירות',
+        }).onOk(()=>{
+          this.disableInputs = true;
         })
+        // this.$router.push('/b/settings_init').catch(() => {
+        // })
       } catch (error) {
         this.$q.dialog({
           title: 'שגיאה',
@@ -100,25 +118,20 @@ export default {
         console.log('error: ' + error)
       }
     },
-    ...mapActions('shifts', ['passwordRegister']),
+    ...mapActions('shifts', ['passwordRegister','signOut']),
     ...mapMutations('shifts', ['setUserInfo'])
   },
   validations: {
     pass1: {
-      password: {
         required,
         alphaNum,
         minLength: minLength(6)
-      },
     },
     pass2: {
-      password: {
         required,
         alphaNum,
         minLength: minLength(6)
-      },
     }
   }
 }
 </script>
-

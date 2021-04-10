@@ -76,7 +76,7 @@ export default {
   },
   async created() {
     const res = await firebaseAuth.getRedirectResult()
-    if (res.user){
+    if (res.user) {
       if (res.additionalUserInfo.isNewUser)
         await this.$router.push('/b/settings_init')
       else
@@ -85,15 +85,17 @@ export default {
     if (firebaseAuth.isSignInWithEmailLink(window.location.href)) {
       const newUserInfo = JSON.parse(window.localStorage.getItem('emailForSignIn'));
       if (newUserInfo && newUserInfo.email) {
-        await this.$router.replace('/b/set_password')
+        await this.$router.push('/b/set_password')
       }
     }
+
   },
   methods: {
     async passwordSignIn() {
       try {
-        await this.passwordLogin(this.tempUser);
-        await this.$router.push('/')
+        const isNewUser = await this.passwordLogin(this.tempUser);
+        if (isNewUser) await this.$router.push('/b/settings_init');
+        else await this.$router.push('/');
       } catch (err) {
         this.$q.dialog({
           title: 'שגיאה',
@@ -105,7 +107,7 @@ export default {
     goToSignUp() {
       this.$router.push('/b/signup')
     },
-    ...mapActions('shifts', ['passwordLogin','googleLogin']),
+    ...mapActions('shifts', ['passwordLogin', 'googleLogin']),
   },
   validations: {
     tempUser: {
